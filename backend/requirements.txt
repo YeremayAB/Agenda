@@ -1,0 +1,16 @@
+# Django y dependencias principales
+Django # Framework principal para desarrollar aplicaciones web.
+djangorestframework # Para construir APIs RESTful en Django.
+django-cors-headers # Manejo de CORS (Cross-Origin Resource Sharing).
+django-crispy-forms  # Mejora la presentación de formularios en Django.
+django-environ  # Manejo de variables de entorno.
+django-crontab  # Para programar tareas cron dentro de la aplicación.
+psycopg2  # Para conexiones a bases de datos PostgreSQL.
+
+# Utilidades
+requests  # Para realizar solicitudes HTTP.
+Pillow  # Para trabajar con imágenes.
+beautifulsoup4  # Para el análisis de HTML y scraping web.
+
+# Opcional (si se requiere integración con IA)
+openai==0.28.0  # Integración con la API de OpenAI.
