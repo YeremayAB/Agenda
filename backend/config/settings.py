@@ -26,7 +26,7 @@ DEBUG = env.bool('DJANGO_DEBUG')
 
 ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=[])
 
-# Application definition
+# Django apps
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -36,25 +36,28 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# Third-party apps
 THIRD_PARTY_APPS = [
     'rest_framework',
 ]
 
-CREATED_APPS = [
+# Local apps
+LOCAL_APPS = [
     'apps.api',
     'apps.core',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + CREATED_APPS
+# Combine all apps
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',  # Necesario para sesiones
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # Necesario para autenticación
+    'django.contrib.messages.middleware.MessageMiddleware',  # Necesario para mensajes
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -80,8 +83,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database configuration
+# config/settings.py
+
 DATABASES = {
-    'default': env.db_url('DJANGO_DB'),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRESQL_DATABASE'),
+        'USER': os.getenv('POSTGRESQL_USER'),
+        'PASSWORD': os.getenv('POSTGRESQL_PASSWORD'),
+        'HOST': os.getenv('POSTGRESQL_HOST'),
+        'PORT': os.getenv('POSTGRESQL_PORT'),
+        # 'OPTIONS':{
+        #   'driver':'ODBC Driver 17 for SQL Server'
+        # },
+    }
 }
 
 # Password validation
