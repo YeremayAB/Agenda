@@ -5,6 +5,7 @@ django-cors-headers # Manejo de CORS (Cross-Origin Resource Sharing).
 django-crispy-forms  # Mejora la presentación de formularios en Django.
 django-environ  # Manejo de variables de entorno.
 django-crontab  # Para programar tareas cron dentro de la aplicación.
+psycopg2  # Para conexiones a bases de datos PostgreSQL.
 
 # Utilidades
 requests  # Para realizar solicitudes HTTP.
