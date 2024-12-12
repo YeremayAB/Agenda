@@ -1,7 +1,19 @@
-// PrimeReact Styles
-import 'primereact/resources/themes/saga-blue/theme.css'; // Tema de PrimeReact
-import 'primereact/resources/primereact.min.css'; // Estilos de PrimeReact
-import 'primeicons/primeicons.css'; // Íconos de PrimeReact
+import { PrimeReactProvider } from 'primereact/api';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { AuthProvider } from "./context/AuthContext";
 
-// TailwindCSS
-import './index.css'; // Archivo base de TailwindCSS
+
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+
+root.render(
+    <React.StrictMode>
+        <PrimeReactProvider>
+        <AuthProvider>
+            <App />
+    
+        </AuthProvider>
+        </PrimeReactProvider>
+    </React.StrictMode>
+);

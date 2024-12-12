@@ -7,6 +7,7 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.1/topics/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 import os
 import environ
@@ -38,7 +39,9 @@ DJANGO_APPS = [
 
 # Third-party apps
 THIRD_PARTY_APPS = [
+     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist'
 ]
 
 # Local apps
@@ -50,8 +53,10 @@ LOCAL_APPS = [
 # Combine all apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
+CORS_ORIGIN_ALLOW_ALL = True
 # Middleware
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',  # Necesario para sesiones
     'django.middleware.common.CommonMiddleware',
@@ -88,7 +93,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRESQL_DATABASE'),
+        'NAME': os.getenv('POSTGRESQL_NAME'),
         'USER': os.getenv('POSTGRESQL_USER'),
         'PASSWORD': os.getenv('POSTGRESQL_PASSWORD'),
         'HOST': os.getenv('POSTGRESQL_HOST'),
@@ -128,3 +133,16 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # Directorio para archivos estáticos re
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+      ],
+}
+
+SIMPLE_JWT = {
+     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+     'ROTATE_REFRESH_TOKENS': True,
+     'BLACKLIST_AFTER_ROTATION': True
+}
