@@ -6,7 +6,7 @@ django-crispy-forms  # Mejora la presentación de formularios en Django.
 django-environ  # Manejo de variables de entorno.
 django-crontab  # Para programar tareas cron dentro de la aplicación.
 psycopg2  # Para conexiones a bases de datos PostgreSQL.
-
+djangorestframework-simplejwt  # Para autenticación y autorización de APIs.
 # Utilidades
 requests  # Para realizar solicitudes HTTP.
 Pillow  # Para trabajar con imágenes.
