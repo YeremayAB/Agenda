@@ -6,7 +6,7 @@ const Dashboard: React.FC = () => {
         <h1 className="text-xl font-bold">Dashboard</h1>
     </header>
     <main className="p-4">
-        <p className="text-gray-700 bg-red-600">Bienvenido al Dashboard</p>
+        <p className="text-gray-700">Bienvenido al Dashboard</p>
     </main>
 </div>
 };
