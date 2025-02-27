@@ -39,9 +39,13 @@ DJANGO_APPS = [
 
 # Third-party apps
 THIRD_PARTY_APPS = [
-     'corsheaders',
+    'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+    'allauth',  
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.azure',
 ]
 
 # Local apps
@@ -145,4 +149,23 @@ SIMPLE_JWT = {
      'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
      'ROTATE_REFRESH_TOKENS': True,
      'BLACKLIST_AFTER_ROTATION': True
+}
+
+AUTHENTICATION_BACKENDS = (
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+SOCIAL_AUTH_MICROSOFT_KEY = env('MICROSOFT_CLIENT_ID') 
+SOCIAL_AUTH_MICROSOFT_SECRET = env('MICROSOFT_CLIENT_SECRET') 
+SOCIAL_AUTH_MICROSOFT_SCOPE = ['openid', 'profile', 'email']
+SOCIAL_AUTH_MICROSOFT_TENANT_ID = env('MICROSOFT_TENANT_ID') 
+
+LOGIC_REDIRECT_URL = '/'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'microsoft': ['openid', 'profile', 'email'],
+    'AUTH_PARAMS': {'access_type': 'offline'},
+    'OAUTH_PKCE_ENABLED': True,
 }

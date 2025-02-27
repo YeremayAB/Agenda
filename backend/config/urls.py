@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from allauth.socialaccount.providers.azure.views import OAuth2LoginView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('apps.api.urls')),
     
+    path('accounts/', include('allauth.urls')),
+    path('accounts/login/microsoft/', OAuth2LoginView.as_view(), name='microsoft-login'),
     
 ]

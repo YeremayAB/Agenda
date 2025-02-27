@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { login } from "../services/loginService";
+import { login, microsoftLogin } from "../services/loginService"; 
+// import axios from "axios"; 
 
 const useLogin = () => {
     const [loading, setLoading] = useState(false);
@@ -12,14 +13,33 @@ const useLogin = () => {
             await login(username, password);
             alert("Login exitoso");
             window.location.href = "/dashboard";
-        } catch  {
+        } catch {
             setError("Credenciales inválidas");
         } finally {
             setLoading(false);
         }
     };
 
-    return { handleLogin, loading, error };
+    const handleMicrosoftLogin = async (code: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await microsoftLogin(code);
+
+            if (response.access_token) {
+                alert("Login exitoso con Microsoft");
+                window.location.href = "/dashboard";
+            } else {
+                setError("Error en el login con Microsoft");
+            }
+        } catch (error) {
+            setError("Ocurrió un error con el login de Microsoft");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { handleLogin, handleMicrosoftLogin, loading, error };
 };
 
 export default useLogin;

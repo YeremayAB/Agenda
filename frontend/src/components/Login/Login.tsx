@@ -6,6 +6,10 @@ import { Card } from "primereact/card";
 import axios from "axios";
 import useLogin from "./hooks/useLogin";
 
+const tenantId = process.env.REACT_APP_MICROSOFT_TENANT_ID;
+const clientId = process.env.REACT_APP_MICROSOFT_CLIENT_ID;
+const redirectUri = process.env.REACT_APP_REDIRECT_URI;
+
 const Login: React.FC = () => {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -24,6 +28,10 @@ const Login: React.FC = () => {
                 setErrorMessage("Ocurrió un error inesperado. Inténtalo de nuevo.");
             }
         }
+    };
+
+    const handleMicrosoftLogin = () => {
+        window.location.href = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=openid%20profile%20email`;
     };
 
     return (
@@ -63,9 +71,10 @@ const Login: React.FC = () => {
                     </div>
                     {/* Botón de Iniciar Sesión */}
                     <Button
-                        type="submit"
-                        label={loading ? "Cargando..." : "Iniciar Sesión"}
-                        className="w-full bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        type="button"
+                        label={loading ? "Cargando..." : "Iniciar sesión con Microsoft"}
+                        onClick={handleMicrosoftLogin} 
+                        className="w-full bg-green-500 text-white font-medium py-2 px-4 rounded-md hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 mt-4"
                     />
                 </form>
             </Card>
