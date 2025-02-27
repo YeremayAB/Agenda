@@ -1,6 +1,5 @@
 # apps/api/apps.py
 
-
 from django.apps import AppConfig
 
 class ApiConfig(AppConfig):
