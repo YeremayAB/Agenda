@@ -7,7 +7,14 @@ export default {
     "./node_modules/primereact/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customGreen: "#5B7D83",
+      },
+      borderRadius: {
+        '20px': '20px', 
+      },
+    },
   },
   plugins: [],
   important: true, // Añade esto
