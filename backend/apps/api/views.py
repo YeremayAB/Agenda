@@ -86,4 +86,11 @@ class MicrosoftLogin(SocialLoginView):
         
         return Response({"error": "No se encontró cuenta de Microsoft vinculada"}, status=400)
 
+
+@api_view(["GET"])
+def listar_usuarios(request):
+    usuarios = User.objects.all().values("id", "username", "email", "first_name", "last_name", "status")
+    return Response({"usuarios": list(usuarios)}, status=status.HTTP_200_OK)
+
+
         
