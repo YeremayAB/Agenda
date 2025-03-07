@@ -1,19 +1,11 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:3000/api/";
-
-export const login = async (username: string, password: string) => {
-    const response = await axios.post(`${API_URL}token/`, { username, password });
-
-    if (response.data.access) {
-        localStorage.setItem("access_token", response.data.access);
-        localStorage.setItem("refresh_token", response.data.refresh);
+export const msalConfig = {
+    auth: {
+        clientId: "d247e254-6008-487a-96f7-f423519064cd",  // Reemplaza con tu client_id real
+        authority: "https://login.microsoftonline.com/d644f2b8-a0cf-4678-b419-c5bfd6230d52",  // Tu tenant_id
+        redirectUri: "http://localhost:3000/auth/callback"  // O la URL de tu frontend
     }
-
-    return response.data;
-};
-
-export const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-};
+  };
+ 
+  export const loginRequest = {
+    scopes: ["User.Read"]
+  };
