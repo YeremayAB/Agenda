@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-attachment: fixed; /* Fija el fondo */
+    overflow-x: hidden;
+  }
+
+/* Estilos generales del header */
+.header {
+    background-color: #5B7D83; 
+    padding: 20px 0;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 20px;
+}
+
+/* Contenido dentro del header */
+.header-content {
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    width: 100%; 
+    max-width: 1200px; 
+    padding: 0 20px; 
+}
+
+/* Logo del header */
+.header-logo {
+    display: flex;
+    justify-content: center; 
+    width: 100%;
+}
+
+/* Estilo para la imagen del logo */
+.header-logo-image {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%; 
+}
+
+.header-logo-image:hover {
+    transform: scale(1.1); 
+}

@@ -1,0 +1,106 @@
+
+
+/* Estilos para el contenedor principal */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85vh;
+    overflow: hidden;
+}
+
+/* Estilos para la tarjeta de login */
+.login-card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 700px;
+}
+
+/* Título del login */
+.login-title {
+    color: #5B7D83;
+    margin-bottom: 1rem;
+}
+
+/* Mensaje de error */
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+/* Estilos para el formulario */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.form-input {
+    width: 95%;
+    padding: 0.5rem;
+    border: 1px solid #919191;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+/* Botón de login */
+.login-button-container {
+    text-align: center;
+}
+
+.login-button {
+    background-color: #5B7D83;
+    color: #fff;
+    border: none;
+    padding: 0.75rem;
+    width: 100%;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-button:hover {
+    background-color: #42595F;
+}
+
+/* Separador */
+.divider {
+    margin: 1.5rem 0;
+    color: #000000;
+    font-weight: bold;
+}
+
+/* Login social */
+.social-login-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-login-container img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.social-login-container img:hover {
+    transform: scale(1.1);
+}

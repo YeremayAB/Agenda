@@ -1,26 +1,36 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { MsalProvider } from "@azure/msal-react";
+import { PublicClientApplication } from "@azure/msal-browser";
 import Login from "./components/Login/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import 'primeicons/primeicons.css'; // Íconos de PrimeReac
-import "./index.css"
+import { msalConfig } from "./authConfig"; // Tu archivo de configuración de MSAL
+import "./App.css";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+
+// Crear la instancia de PublicClientApplication
+const msalInstance = new PublicClientApplication(msalConfig);
 
 const App: React.FC = () => {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route
-                    path="/dashboard"
-                    element={
-                        <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    }
-                />
-            </Routes>
-        </Router>
+        <MsalProvider instance={msalInstance}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path='/' element={<Login />} />
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Routes>
+            </BrowserRouter>
+        </MsalProvider>
     );
 };
 
