@@ -1,76 +1,80 @@
 import React, { useState } from "react";
-import { InputText } from "primereact/inputtext";
-
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../../authConfig";
+import axios from "axios";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import axios from "axios";
-import useLogin from "./hooks/useLogin";
+import "../../assets/styles/login.css";
+import Header from "../../components/Header/Header";
+import { useNavigate } from "react-router-dom";
 
-const Login: React.FC = () => {
-    const [username, setUsername] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const { handleLogin, loading } = useLogin();
+const Login = () => {
+  const { instance, accounts } = useMsal();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const onSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrorMessage(null);
-        try {
-            await handleLogin(username, password);
-        } catch (err: unknown) {
-            if (axios.isAxiosError(err) && err.response?.status === 401) {
-                setErrorMessage("Usuario o contraseña incorrectos");
-            } else {
-                setErrorMessage("Ocurrió un error inesperado. Inténtalo de nuevo.");
-            }
-        }
-    };
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null); // Limpiar errores anteriores
 
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <Card className="className=shadow-lg w-[500px] p-6 rounded-md" >
-                <h2 className="text-center text-xl font-bold mb-6">Iniciar Sesión</h2>
-                {errorMessage && (
-                    <p className="text-red-500 text-center mb-4">{errorMessage}</p>
-                )}
-                <form onSubmit={onSubmit} className="space-y-5">
-                    {/* Campo de Usuario */}
-                    <div>
-                        <label htmlFor="username" className="block mb-2 font-medium">
-                            Usuario
-                        </label>
-                        <InputText
-                            id="username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Usuario"
-                        />
-                    </div>
-                    {/* Campo de Contraseña */}
-                    <div>
-                        <label htmlFor="password" className="block mb-2 font-medium">
-                            Contraseña
-                        </label>
-                        <InputText
-                            type="password" // Cambiar el tipo a contraseña
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Contraseña"
-                        />
-                    </div>
-                    {/* Botón de Iniciar Sesión */}
-                    <Button
-                        type="submit"
-                        label={loading ? "Cargando..." : "Iniciar Sesión"}
-                        className="w-full bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    />
-                </form>
-            </Card>
-        </div>
-    );
+    try {
+      // Intentar login silencioso
+      const response = await instance.acquireTokenSilent({
+        ...loginRequest,
+        account: accounts.length > 0 ? accounts[0] : undefined, // Usar la cuenta activa si está disponible
+      });
+
+      // Si se obtiene un token de acceso, autenticamos con el backend
+      if (response.accessToken) {
+        await authenticateWithBackend(response.accessToken);
+      } else {
+        throw new Error("No se recibió un token de acceso válido.");
+      }
+    } catch (err) {
+      console.error("Error en el inicio de sesión silencioso:", err);
+      // Aquí no mostramos el popup ni intentamos iniciar sesión de nuevo
+      setError("No se pudo iniciar sesión. Por favor, verifica tu sesión.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const authenticateWithBackend = async (accessToken: string) => {
+    try {
+      const backendResponse = await axios.post("/api/auth/microsoft/", {
+        access_token: accessToken,
+      });
+      console.log("Usuario autenticado:", backendResponse.data);
+      // Redirige al dashboard si la autenticación es exitosa
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Error al autenticar con el backend:", err);
+      setError("Error al validar las credenciales en el backend.");
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <Header />
+      <div className="login-container">
+        <Card className="login-card" title="Bienvenido a la aplicación de agenda">
+          {error && <p className="error-message">{error}</p>} {/* Mostrar errores si existen */}
+          <p>Por favor, inicia sesión con tu cuenta de Microsoft.</p>
+          {loading ? (
+            <span>Cargando...</span>
+          ) : (
+            <Button
+              label="Iniciar Sesión con Microsoft"
+              className="login-button"
+              onClick={handleLogin}
+              disabled={loading}
+            />
+          )}
+        </Card>
+      </div>
+    </div>
+  );
 };
 
 export default Login;
