@@ -15,7 +15,6 @@ services:
     container_name: backend
     working_dir: /home/site/wwwroot
     build: ./backend
-    working_dir: /home/site/wwwroot
     command: python manage.py runserver 0.0.0.0:8000
     ports: 
       - "3000:8000"
