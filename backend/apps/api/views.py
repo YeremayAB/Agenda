@@ -1,6 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.http import JsonResponse
+import os
 
 @api_view(['POST'])
 def validate_microsoft_token(request):
@@ -23,3 +25,12 @@ def validate_microsoft_token(request):
         })
     else:
         return Response({'error': 'Token inválido'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# def get_msal_config(request):
+#     config = {
+#         "clientId": os.getenv("MICROSOFT_CLIENT_ID"),
+#         "authority": f"https://login.microsoftonline.com/{os.getenv('MICROSOFT_TENANT_ID')}",
+#         "redirectUri": "http://localhost:3000/auth/callback",
+#     }
+#     return JsonResponse(config)
