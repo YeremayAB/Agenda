@@ -5,7 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 85vh;
+    height: 80vh;
     overflow: hidden;
 }
 
@@ -19,10 +19,19 @@
     width: 700px;
 }
 
-/* Título del login */
-.login-title {
-    color: #5B7D83;
-    margin-bottom: 1rem;
+/* Título del Card */
+.login-card .p-card-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2c3e50; /* Azul oscuro */
+    text-transform: uppercase;
+}
+
+/* Texto del Card */
+.login-card p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
 }
 
 /* Mensaje de error */
@@ -103,4 +112,43 @@
 
 .social-login-container img:hover {
     transform: scale(1.1);
+}
+
+
+/* Estilos generales del Toast */
+.p-toast {
+    top: 80px !important; /* Ajusta la posición para que no cubra el header */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Estilos para los mensajes de error */
+.p-toast-message.p-toast-message-error {
+    background-color: #ff4d4f !important; /* Rojo más llamativo */
+    border-left: 5px solid #d32f2f !important; /* Borde rojo oscuro para resaltar */
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Estilos para el ícono de error */
+.p-toast-message-error .p-toast-icon-close {
+    color: white !important;
+}
+
+/* Estilos para el contenido del Toast */
+.p-toast-message-content {
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+}
+
+/* Estilos para el título del Toast */
+.p-toast-summary {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Estilos para el texto del mensaje */
+.p-toast-detail {
+    font-size: 14px;
+    opacity: 0.9;
 }
