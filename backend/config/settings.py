@@ -31,11 +31,11 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',  # Necesario para sesiones
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # Necesario para autenticación
+    'django.contrib.messages.middleware.MessageMiddleware',  # Necesario para mensajes
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
  
@@ -100,3 +100,8 @@ MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET')
 MICROSOFT_TENANT_ID = env('MICROSOFT_TENANT_ID')
 MICROSOFT_AUTHORITY = f"https://login.microsoftonline.com/{MICROSOFT_TENANT_ID}"
 MICROSOFT_SCOPE = ["User.Read"]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]

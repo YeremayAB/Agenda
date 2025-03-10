@@ -20,3 +20,4 @@ django-allauth
 
 dj-rest-auth
 django-cryptography
+msal

@@ -3,6 +3,7 @@ def get_access_token():
         client_id=settings.OUTLOOK_CLIENT_ID,
         authority=f"https://login.microsoftonline.com/{settings.OUTLOOK_TENANT_ID}",
         client_credential=settings.OUTLOOK_CLIENT_SECRET,
+        # redirectUri="http://localhost:5173/auth/callback",
     )
    
     result = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
