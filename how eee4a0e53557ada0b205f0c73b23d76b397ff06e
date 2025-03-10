@@ -1,0 +1,24 @@
+[33me76299a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/view-agenda[m[33m)[m Intento
+[33m764ecd9[m Intento 2
+[33m6e099c7[m Intento
+[33meee4a0e[m Cambios
+[33m5508c5a[m[33m ([m[1;31morigin/feature/view-agenda[m[33m)[m Update Login.tsx
+[33m4e0d4c4[m feat(Azure AD) list of users
+[33m588397b[m Restore git History
+[33m530f91a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Prueba
+[33m62198ca[m Prueba
+[33m773658a[m Merge pull request #4 from caribecandev/Auth
+[33mfe7b91a[m feat:
+[33maeebf37[m feat: Autenticacion
+[33m00237f3[m Merge pull request #3 from caribecandev/backend
+[33ma7b64b9[m fix: :bug:
+[33m531873e[m feat: :sparkles: Dockerización del proyecto: Añadidos Dockerfiles, configuración de Compose y ajustes
+[33m60bf624[m refactor(backend): :sparkles: settings.json
+[33mc1fb29a[m feat(backend): :sparkles: unificar frontend y backend generado
+[33ma32c2ba[m refactor:
+[33m39ad890[m Merge branch 'backend' of https://github.com/caribecandev/Reango into backend
+[33m9c977f1[m Merge pull request #2 from caribecandev/dev
+[33m87503ad[m feat(backend): :sparkles: Commit inicial: Estructura del proyecto Django con apps core y API  - Configuración inicial del proyecto. - App `core` con funcionalidad base. - App `api` con modelos, vistas y serializers. - Agregado `requirements.txt` para dependencias. - Configuración de URLs
+[33m790c7a8[m Merge pull request #1 from caribecandev/react
+[33m66704cf[m feat: initialize project with Vite, PrimeReact, and TailwindCSS setup"
+[33mbc06de8[m Initial commit
