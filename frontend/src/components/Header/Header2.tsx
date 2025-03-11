@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom"; // Para redirigir al perfil y al logout
 import "../../assets/styles/header.css";
 import { Avatar } from "primereact/avatar";
