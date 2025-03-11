@@ -1,0 +1,59 @@
+.p-paginator .p-paginator-pages {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .p-paginator .p-paginator-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd; 
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .p-paginator .p-paginator-page:hover {
+    background-color: #5B7D83;
+    color: white;
+  }
+  
+  .p-paginator .p-paginator-page.p-highlight {
+    background-color: #5B7D83;
+    color: white; 
+  }
+  
+  .p-paginator .p-paginator-pages .p-paginator-page:disabled {
+    cursor: not-allowed;
+    background-color: #f2f2f2;
+    color: #b3b3b3;
+  }
+
+  .p-paginator .p-paginator-pages .p-paginator-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    font-size: 14px;
+    color: #5B7D83;
+    cursor: pointer;
+  }
+  
+
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-last {
+  margin-left: 10px; 
+  margin-right: 10px; 
+}
+
+.p-paginator .p-paginator-prev .pi,
+.p-paginator .p-paginator-next .pi,
+.p-paginator .p-paginator-first .pi,
+.p-paginator .p-paginator-last .pi {
+  font-size: 18px; 
+}
