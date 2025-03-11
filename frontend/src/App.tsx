@@ -29,7 +29,7 @@ const App: React.FC = () => {
           <Route
             path="/user_profile"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <UserProfile
                   name={""}
                   position={""}
@@ -38,7 +38,7 @@ const App: React.FC = () => {
                   department={""}
                   office={""}
                 />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
         </Routes>

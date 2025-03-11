@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "primereact/card";
-import { Button } from "primereact/button";
 import { Avatar } from "primereact/avatar";
 import "../assets/styles/UserProfile.css";
-import Header from "../components/Header/Header";
+import { Button } from "primereact/button";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; // Elige el tema que prefieras
+import "primereact/resources/primereact.min.css"; // Estilos de los componentes
+import "primeicons/primeicons.css"; // Estilos de los iconos
+import { Dialog } from "primereact/dialog";
+import Header2 from "../components/Header/Header2";
 
 interface UserProfileProps {
   name: string;
@@ -26,19 +30,46 @@ const UserProfile: React.FC<UserProfileProps> = ({
   office,
   profilePicture,
 }) => {
+  const [visible, setVisible] = useState(false);
+
   return (
     <div>
-      <Header />
+      <Header2 />
+      {/* Botón de regreso con PrimeReact */}
+      <Button
+        icon="pi pi-arrow-left"
+        className="back-button"
+        onClick={() => window.history.back()}
+      />
       <div className="user-profile">
         <h2 className="user-title">
           {name} - <strong>{position.toUpperCase()}</strong>
         </h2>
         <Avatar
-          image={profilePicture || "/default-avatar.png"}
+          image={profilePicture || "/default-avatar.jpg"}
+          icon="pi pi-user"
           className="user-avatar"
           shape="circle"
-          icon="pi pi-user"
+          onClick={() => {
+            console.log("Avatar clickeado"); // Debug para ver si funciona
+            setVisible(true);
+          }}
+          style={{ cursor: "pointer" }} // Asegurar que el cursor indique clickeable
         />
+        <Dialog
+          visible={visible}
+          onHide={() => setVisible(false)}
+          header="Foto de perfil"
+          className="profile-dialog"
+          modal
+          style={{ width: "50vw", textAlign: "center" }}
+        >
+          <img
+            src={profilePicture || "/default-avatar.jpg"}
+            alt="Perfil"
+            className="profile-modal-img"
+          />
+        </Dialog>
         <Card className="user-card">
                 <div className="user-info">
                     <p><strong>Email:</strong> {email}</p>

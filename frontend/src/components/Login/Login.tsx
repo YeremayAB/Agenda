@@ -22,8 +22,8 @@ const Login: React.FC = () => {
         try {
             await instance.loginRedirect(loginRequest);
             const response = await instance.handleRedirectPromise();
-            if (!response || !response.accessToken) {
-                throw new Error('No access token found');
+            if (!response) {
+                throw new Error('No response from handleRedirectPromise');
             }
             const token = response.accessToken;
 

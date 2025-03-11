@@ -14,13 +14,19 @@ def validate_microsoft_token(request):
 
     if response.status_code == 200:
         user_data = response.json()
-        # Aquí se responde con la URL a la que se debe redirigir el usuario en el frontend
-        return Response({'status': 'ok', 'redirect_url': '/dashboard'})  # La URL donde se redirigirá al usuario
+        user_info = {
+            'id': user_data.get('id'),
+            'name': user_data.get('displayName'),
+            'email': user_data.get('mail') or user_data.get('userPrincipalName'),
+            'jobTitle': user_data.get('jobTitle'),
+            'profilePicture': "https://graph.microsoft.com/v1.0/me/photo/$value"
+        }
+        return Response({'status': 'ok', 'user': user_info, 'redirect_url': '/dashboard'})
     elif response.status_code == 401:
         return Response({'error': 'Token inválido o expirado'}, status=401)
-    elif response.status_code == 403:
-        return Response({'error': 'Permisos insuficientes para acceder al recurso'}, status=403)
-    elif response.status_code == 400:
-        return Response({'error': 'Solicitud incorrecta, verifica el token'}, status=400)
-    else:
-        return Response({'error': 'Error desconocido al validar el token'}, status=response.status_code)
+    return Response({'error': 'Error al obtener datos del usuario'}, status=response.status_code)
+
+@api_view(['GET'])
+def auth_callback(request):
+    # Handle the callback logic here
+    return Response({'message': 'Callback received'})

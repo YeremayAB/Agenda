@@ -13,18 +13,24 @@ body {
     padding: 20px 0;
     display: flex;
     justify-content: center; 
-    align-items: center; 
-    margin-bottom: 20px;
+    align-items: center;
 }
 
 /* Contenido dentro del header */
 .header-content {
-    display: flex;
-    align-items: center; 
-    justify-content: center; 
-    width: 100%; 
-    max-width: 1200px; 
-    padding: 0 20px; 
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0 50px;
+}
+
+.header-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-left: 20px;
 }
 
 /* Logo del header */
@@ -43,4 +49,39 @@ body {
 
 .header-logo-image:hover {
     transform: scale(1.1); 
+}
+
+.user-avatar1 {
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.user-avatar1:hover {
+    transform: scale(1.1); /* Efecto de zoom al pasar el mouse */
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    flex-direction: row;
+    max-width: 1000px;
+    width: 220px;
+    gap: 20px;
+}
+
+.logout-text {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    font-size: 16px;
+}
+
+.logout-text:hover {
+    color: #c5c5c5;
 }
