@@ -1,4 +1,11 @@
-
+/* Estilos para la página de login */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+}
 
 /* Estilos para el contenedor principal */
 .login-container {
@@ -7,6 +14,8 @@
     align-items: center;
     height: 85vh;
     overflow: hidden;
+    width: 100%;
+    padding: 1rem;
 }
 
 /* Estilos para la tarjeta de login */
@@ -16,7 +25,7 @@
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 700px;
+    width: 500px;
 }
 
 /* Título del login */
@@ -80,13 +89,6 @@
     background-color: #42595F;
 }
 
-/* Separador */
-.divider {
-    margin: 1.5rem 0;
-    color: #000000;
-    font-weight: bold;
-}
-
 /* Login social */
 .social-login-container {
     display: flex;
@@ -103,4 +105,22 @@
 
 .social-login-container img:hover {
     transform: scale(1.1);
+}
+
+/* Personalización del botón de login con Microsoft */
+.login-page button {
+    background-color: #5B7D83;
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.login-page button:hover {
+    background-color: #42595F;
 }

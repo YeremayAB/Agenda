@@ -43,40 +43,42 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Contenedor principal centrado */}
-        <div className="flex items-center justify-center min-h-[75vh]">
-          <div className="bg-white p-6 shadow-lg rounded-xl w-full max-w-[1500px]">
-            <DataTable
-              value={filteredData.slice(first, first + rows)}
-              responsiveLayout="scroll"
-              className="border border-gray-200 rounded-lg border-collapse mb-6"
-            >
-              {/* Columnas con headers centrados */}
-              {["col1", "col2", "col3", "col4", "col5"].map((col, index) => (
-                <Column
-                  key={index}
-                  field={col}
-                  header="Text"
-                  style={{ flex: 1 }}
-                  headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
-                  bodyClassName="border border-gray-200 p-3 h-full"
-                />
-              ))}
-            </DataTable>
+        {/* Contenedor principal */}
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="bg-white p-6 shadow-lg rounded-xl w-full max-w-[1500px] h-full min-h-[60vh]">
+            {/* Contenedor de la tarjeta */}
+            <div className="card-content">
+              <DataTable
+                value={filteredData.slice(first, first + rows)}
+                className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
+              >
+                {/* Columnas */}
+                {["col1", "col2", "col3", "col4", "col5"].map((col, index) => (
+                  <Column
+                    key={index}
+                    field={col}
+                    header="Text"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full"
+                  />
+                ))}
+              </DataTable>
 
-            <div className="flex justify-center mt-4 mb-6">
-              <Paginator
-                first={first}
-                rows={rows}
-                totalRecords={filteredData.length}
-                rowsPerPageOptions={[5, 10, 25]}
-                onPageChange={(e) => {
-                  setFirst(e.first);
-                  setRows(e.rows);
-                }}
-                template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                className="rounded-lg border border-gray-300 shadow-sm p-2 bg-white"
-              />
+              {/* Paginador */}
+              <div className="paginator-container flex justify-center mt-4 mb-6">
+                <Paginator
+                  first={first}
+                  rows={rows}
+                  totalRecords={filteredData.length}
+                  rowsPerPageOptions={[5, 10, 25]}
+                  onPageChange={(e) => {
+                    setFirst(e.first);
+                    setRows(e.rows);
+                  }}
+                  template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                  className="rounded-lg border border-gray-300 shadow-sm p-2 bg-white"
+                />
+              </div>
             </div>
           </div>
         </div>
