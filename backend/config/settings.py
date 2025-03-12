@@ -38,6 +38,21 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',  # Necesario para mensajes
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+ # 🔥 CORS CONFIGURACIÓN
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # 🔥 Permite peticiones desde tu frontend
+]
+
+CORS_ALLOW_CREDENTIALS = True  # 🔥 Permitir cookies y tokens de autenticación
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "access-control-allow-origin",
+]
+
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]  # 🔥 Métodos permitido
+
  
 TEMPLATES = [
     {

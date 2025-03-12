@@ -1,21 +1,11 @@
-/* Estilos para la página de login */
-.login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f7f7f7;
-}
 
 /* Estilos para el contenedor principal */
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 85vh;
+    height: 80vh;
     overflow: hidden;
-    width: 100%;
-    padding: 1rem;
 }
 
 /* Estilos para la tarjeta de login */
@@ -25,13 +15,22 @@
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 500px;
+    width: 700px;
 }
 
-/* Título del login */
-.login-title {
-    color: #5B7D83;
-    margin-bottom: 1rem;
+/* Título del Card */
+.login-card .p-card-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2c3e50; /* Azul oscuro */
+    text-transform: uppercase;
+}
+
+/* Texto del Card */
+.login-card p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
 }
 
 /* Mensaje de error */
@@ -89,6 +88,13 @@
     background-color: #42595F;
 }
 
+/* Separador */
+.divider {
+    margin: 1.5rem 0;
+    color: #000000;
+    font-weight: bold;
+}
+
 /* Login social */
 .social-login-container {
     display: flex;
@@ -107,20 +113,41 @@
     transform: scale(1.1);
 }
 
-/* Personalización del botón de login con Microsoft */
-.login-page button {
-    background-color: #5B7D83;
-    color: #fff;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
-    margin-top: 1rem;
+
+/* Estilos generales del Toast */
+.p-toast {
+    top: 80px !important; /* Ajusta la posición para que no cubra el header */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
 }
 
-.login-page button:hover {
-    background-color: #42595F;
+/* Estilos para los mensajes de error */
+.p-toast-message.p-toast-message-error {
+    background-color: #ff4d4f !important; /* Rojo más llamativo */
+    border-left: 5px solid #d32f2f !important; /* Borde rojo oscuro para resaltar */
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Estilos para el ícono de error */
+.p-toast-message-error .p-toast-icon-close {
+    color: white !important;
+}
+
+/* Estilos para el contenido del Toast */
+.p-toast-message-content {
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+}
+
+/* Estilos para el título del Toast */
+.p-toast-summary {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Estilos para el texto del mensaje */
+.p-toast-detail {
+    font-size: 14px;
+    opacity: 0.9;
 }
