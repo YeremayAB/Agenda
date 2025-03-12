@@ -7,47 +7,51 @@ const AuthCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const urlFragment = window.location.hash;
-
-    if (urlFragment && window.location.origin === "http://localhost:3000") {
-      const redirectUrl = `http://localhost:5173/auth/callback${urlFragment}`;
-
-      window.location.replace(redirectUrl);
-      return;  
-    }
-
     const handleAuth = async () => {
-      if (inProgress === "none") {
-        try {
-          const response = await instance.handleRedirectPromise();
+      try {
+        const response = await instance.handleRedirectPromise();
 
-          if (response) {
-            const token = response.accessToken;
-
-            const backendResponse = await fetch('http://localhost:3000/api/auth/validate-microsoft/', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ token })
-            });
-
-            const result = await backendResponse.json();
-
-            if (result.status === 'ok') {
-              localStorage.setItem('user', JSON.stringify(result.user));
-              localStorage.setItem('token', token);
-              navigate('/dashboard', { replace: true });
-            } else {
-              navigate('/');
-            }
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          navigate('/');
+        if (!response) {
+          console.warn("No se recibió respuesta del login");
+          navigate("/");
+          return;
         }
+
+        const token = response.accessToken;
+        console.log("Token recibido:", token);
+
+        const backendResponse = await fetch(
+          "http://localhost:8000/api/validate-microsoft/",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          }
+        );
+
+        if (!backendResponse.ok) {
+          throw new Error("Error en la respuesta del backend");
+        }
+
+        const result = await backendResponse.json();
+
+        if (result.status === "ok") {
+          localStorage.setItem("user", JSON.stringify(result.user));
+          localStorage.setItem("token", token);
+          navigate("/dashboard", { replace: true });
+        } else {
+          console.error("Error de autenticación:", result.error);
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Error durante la autenticación:", error);
+        navigate("/");
       }
     };
 
-    handleAuth();
+    if (inProgress === "none") {
+      handleAuth();
+    }
   }, [instance, inProgress, navigate]);
 
   return <p>Autenticando...</p>;

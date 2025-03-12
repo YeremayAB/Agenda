@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
         {/* Barra de búsqueda */}
         <div className="flex justify-center mt-12">
           <div className="relative w-1/2">
-            <i className="pi pi-search text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2" />
+            <i className="pi pi-search text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2 font-karma" />
             <InputText
               value={search}
               onChange={(e) => setSearch(e.target.value)}
