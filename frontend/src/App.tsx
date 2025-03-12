@@ -7,7 +7,7 @@ import { MsalProvider } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "../src/components/Login/services/loginService";
 import UserProfile from "./pages/UserProfile";
-import AuthCallback from "./pages/AuthCallback";
+
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -17,7 +17,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />  {/* Ruta para manejar el callback */}
+          
           <Route
             path="/dashboard"
             element={
