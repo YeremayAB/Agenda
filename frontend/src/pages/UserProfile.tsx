@@ -45,17 +45,31 @@ const UserProfile: React.FC<UserProfileProps> = ({
         <h2 className="user-title">
           {name} - <strong>{position.toUpperCase()}</strong>
         </h2>
-        <Avatar
-          image={profilePicture || "/default-avatar.jpg"}
-          icon="pi pi-user"
-          className="user-avatar"
-          shape="circle"
-          onClick={() => {
-            console.log("Avatar clickeado"); // Debug para ver si funciona
-            setVisible(true);
-          }}
-          style={{ cursor: "pointer" }} // Asegurar que el cursor indique clickeable
-        />
+         {/* Tarjeta que contiene la imagen y la info */}
+         <Card className="user-card">
+          <div className="user-content">
+            {/* Avatar dentro de la tarjeta */}
+            <Avatar
+              image={profilePicture || "/default-avatar.jpg"}
+              icon="pi pi-user"
+              className="user-avatar"
+              shape="circle"
+              onClick={() => setVisible(true)}
+              style={{ cursor: "pointer" }}
+            />
+
+            {/* Información del usuario */}
+            <div className="user-info">
+              <p><strong>Email:</strong> {email}</p>
+              <p><strong>Extensión:</strong></p>
+              <p><strong>Teléfono:</strong> {phone}</p>
+              <p><strong>Teléfono móvil:</strong> {mobile || "-"}</p>
+              <p><strong>Posición:</strong> {position}</p>
+              <p><strong>Departamento:</strong> {department}</p>
+              <p><strong>Oficina:</strong> {office}</p>
+            </div>
+          </div>
+        </Card>
         <Dialog
           visible={visible}
           onHide={() => setVisible(false)}
@@ -70,17 +84,6 @@ const UserProfile: React.FC<UserProfileProps> = ({
             className="profile-modal-img"
           />
         </Dialog>
-        <Card className="user-card">
-                <div className="user-info">
-                    <p><strong>Email:</strong> {email}</p>
-                    <p><strong>Extensión:</strong></p>
-                    <p><strong>Teléfono:</strong> {phone}</p>
-                    <p><strong>Teléfono móvil:</strong> {mobile || ""}</p>
-                    <p><strong>Posición:</strong> {position}</p>
-                    <p><strong>Departamento:</strong> {department}</p>
-                    <p><strong>Oficina:</strong> {office}</p>
-                </div>
-        </Card>
       </div>
     </div>
   );

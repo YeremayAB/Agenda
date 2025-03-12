@@ -2,6 +2,7 @@
 #root {
     margin: 0 auto;
     overflow-x: hidden;
+    background-color: #f3f3f3;
   }
   
   
@@ -10,7 +11,7 @@
     margin: 0;
     padding: 0;
     background-size: cover;
-    background-color: rgb(238, 238, 238);
+    background-color: #f3f3f3;
    
   }
   

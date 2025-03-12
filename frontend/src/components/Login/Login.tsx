@@ -7,44 +7,44 @@ import Header from '../Header/Header';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import "../../assets/styles/Login.css";
-
+ 
 const Login: React.FC = () => {
-
     const { instance } = useMsal();
     const navigate = useNavigate();
     const toast = useRef<Toast>(null);
-
+ 
     const showError = (message: string) => {
         toast.current?.show({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
     };
-
+ 
     const handleLogin = async () => {
         try {
-            await instance.loginRedirect(loginRequest);
-            const response = await instance.handleRedirectPromise();
-            if (!response) {
-                throw new Error('No response from handleRedirectPromise');
+            const response = await instance.loginPopup(loginRequest);  // ✅ Usa loginPopup
+            if (!response || !response.accessToken) {
+                throw new Error("No se obtuvo un token válido de Microsoft.");
             }
-            const token = response.accessToken;
-
-            console.log("Token recibido:", token);
-
-            const backendResponse = await fetch('http://localhost:8000/api/auth/validate-microsoft/', {
+ 
+            const msToken = response.accessToken;
+            console.log("Token MS recibido:", msToken);
+ 
+            // Enviar token al backend para validación
+            const backendResponse = await fetch('http://localhost:3000/api/auth/validate-microsoft/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token })
+                body: JSON.stringify({ msToken })
             });
-
+ 
             if (!backendResponse.ok) {
                 throw new Error(`Error en la autenticación: ${backendResponse.status}`);
             }
-
+ 
             const result = await backendResponse.json();
-
-            if (result.status === 'ok' && result.user) {
+ 
+            if (result.status === 'ok' && result.access) {
                 localStorage.setItem('user', JSON.stringify(result.user));
-                localStorage.setItem('token', token);
-                navigate('/dashboard');
+                localStorage.setItem('token', result.access);
+                localStorage.setItem('refresh', result.refresh);
+                navigate('/dashboard');  // ✅ Redirige al dashboard tras el login exitoso
             } else {
                 showError('Error de autenticación. Verifica tus credenciales.');
             }
@@ -53,7 +53,7 @@ const Login: React.FC = () => {
             showError('Error conectando con Microsoft. Inténtalo de nuevo.');
         }
     };
-
+ 
     return (
       <div className="login-page">
         <Header />
@@ -71,5 +71,5 @@ const Login: React.FC = () => {
       </div>
     );
 };
-
+ 
 export default Login;

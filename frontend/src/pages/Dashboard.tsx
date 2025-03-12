@@ -3,8 +3,8 @@ import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
-import Header from "../components/Header/Header";
 import "../assets/styles/Dashboard.css";
+import Header2 from "../components/Header/Header2";
 
 const Dashboard: React.FC = () => {
   const [first, setFirst] = useState(0);
@@ -27,7 +27,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <Header />
+      <Header2 />
 
       <div className="p-8 bg-gray-100 min-h-screen">
         {/* Barra de búsqueda */}
@@ -50,7 +50,7 @@ const Dashboard: React.FC = () => {
             <div className="card-content">
               <DataTable
                 value={filteredData.slice(first, first + rows)}
-                className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
+                className="data-table border border-gray-200 rounded-xl border-collapse mb-6"
               >
                 {/* Columnas */}
                 {["col1", "col2", "col3", "col4", "col5"].map((col, index) => (
@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
                     key={index}
                     field={col}
                     header="Text"
-                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    headerClassName="bg-[#5B7D83] text-white  border border-gray-200 p-3"
                     bodyClassName="border border-gray-200 p-3 h-full"
                   />
                 ))}
