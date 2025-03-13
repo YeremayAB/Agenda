@@ -8,7 +8,6 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "../src/components/Login/services/loginService";
 import UserProfile from "./pages/UserProfile";
 
-
 const msalInstance = new PublicClientApplication(msalConfig);
 
 const App: React.FC = () => {
@@ -17,29 +16,18 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          
+
           <Route
             path="/dashboard"
             element={
               // <ProtectedRoute>
-                <Dashboard />
+              <Dashboard />
               // </ProtectedRoute>
             }
           />
           <Route
-            path="/user_profile"
-            element={
-              // <ProtectedRoute>
-                <UserProfile
-                  name={""}
-                  position={""}
-                  email={""}
-                  phone={""}
-                  department={""}
-                  office={""}
-                />
-              // </ProtectedRoute>
-            }
+            path="/user_profile/:userId"
+            element={<UserProfile />} 
           />
         </Routes>
       </Router>
