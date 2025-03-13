@@ -12,20 +12,24 @@ export interface User {
   jobTitle?: string | null;
 }
 
-// Función para obtener todos los usuarios desde el backend
-export const getUsers = async (): Promise<User[]> => {
+export const getUsers = async (): Promise<{ users: User[] }> => {
   try {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No se encontró el token de autenticación");
 
-    const response = await axios.get<{ value: User[] }>(`${API_BASE_URL}/users/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get<{ users: User[] }>(
+      `${API_BASE_URL}/users/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    return response.data.value; // Microsoft Graph API devuelve los datos en "value"
+    console.log("Respuesta de la API:", response.data); // Debug
+
+    return response.data; // Asegurarse de que devuelve { users: [...] }
   } catch (error) {
     console.error("Error obteniendo usuarios:", error);
     throw error;

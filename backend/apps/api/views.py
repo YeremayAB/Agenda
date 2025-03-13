@@ -75,17 +75,29 @@ def get_users(request):
             return Response({"error": f"Error obteniendo token: {token_json}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         access_token = token_json["access_token"]
-
         headers = {"Authorization": f"Bearer {access_token}"}
-        users_response = requests.get(GRAPH_API_USERS_URL, headers=headers)
 
-        if users_response.status_code != 200:
-            return Response({"error": f"Error en Microsoft Graph: {users_response.json()}"}, status=users_response.status_code)
+        # Obtener TODOS los usuarios con paginación
+        users = []
+        next_url = GRAPH_API_USERS_URL
 
-        return Response(users_response.json(), status=status.HTTP_200_OK)
+        while next_url:
+            users_response = requests.get(next_url, headers=headers)
+            
+            if users_response.status_code != 200:
+                return Response({"error": f"Error en Microsoft Graph: {users_response.json()}"}, status=users_response.status_code)
+
+            users_data = users_response.json()
+            users.extend(users_data.get("value", []))  # Agregar usuarios a la lista
+
+            # Verificar si hay más páginas
+            next_url = users_data.get("@odata.nextLink")
+
+        return Response({"total_users": len(users), "users": users}, status=status.HTTP_200_OK)
 
     except requests.exceptions.RequestException as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['GET'])
 def get_user(request, user_id):

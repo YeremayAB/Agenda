@@ -6,14 +6,13 @@ import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
 import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
-
 import { getUsers, User } from "../components/Login/services/UsersService";
 
 const Dashboard: React.FC = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]); // Asegurar que siempre sea un array
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -23,8 +22,9 @@ const Dashboard: React.FC = () => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const data = await getUsers();
-        setUsers(data);
+        const response = await getUsers();
+        console.log("Respuesta de la API:", response); // Debug
+        setUsers(response.users ?? []); // Extrae `users` del objeto y asigna un array vacío si no existe
       } catch (err) {
         console.error("Error cargando usuarios:", err);
         setError("Error cargando usuarios");
@@ -32,10 +32,9 @@ const Dashboard: React.FC = () => {
         setLoading(false);
       }
     };
-
+  
     fetchUsers();
   }, []);
-
   // Manejar clic en la celda para redirigir a perfil de usuario
   const handleCellClick = (rowData: User) => {
     navigate(`/user_profile/${rowData.id}`, { state: { userData: rowData } });
@@ -65,9 +64,9 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Filtrar usuarios según búsqueda
-  const filteredData = users.filter((user) =>
-    Object.values(user).some(
+  // Filtrar usuarios según búsqueda de manera segura
+  const filteredData = (users ?? []).filter((user) =>
+    Object.values(user || {}).some(
       (val) => val && val.toString().toLowerCase().includes(search.toLowerCase())
     )
   );
@@ -99,7 +98,7 @@ const Dashboard: React.FC = () => {
                 <p>Cargando usuarios...</p>
               ) : error ? (
                 <p>{error}</p>
-              ) : (
+              ) : users.length > 0 ? (
                 <DataTable
                   value={filteredData.slice(first, first + rows)}
                   className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
@@ -151,6 +150,8 @@ const Dashboard: React.FC = () => {
                     )}
                   />
                 </DataTable>
+              ) : (
+                <p>No hay usuarios disponibles.</p>
               )}
 
               {/* Paginador */}
