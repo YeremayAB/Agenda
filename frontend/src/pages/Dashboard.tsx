@@ -7,72 +7,55 @@ import { Paginator } from "primereact/paginator";
 import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
 
+import { getUsers, User } from "../components/Login/services/UsersService";
+
 const Dashboard: React.FC = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("Token de acceso no encontrado");
-        return;
-      }
-  
-      const response = await fetch("http://localhost:3000/api/auth/users/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error("Respuesta del servidor:", errorData);
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-  
-      const data = await response.json();
-  
-      // Verificar que los datos sean un array antes de asignarlos
-      if (!Array.isArray(data)) {
-        console.error("Los datos recibidos no son un array:", data);
-        return;
-      }
-  
-      setUsers(data);
-      console.log(data);
-    } catch (error) {
-      console.error("Error al obtener los usuarios:", error);
-    }
-  };
-
+  // Obtener usuarios del servicio
   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const data = await getUsers();
+        setUsers(data);
+      } catch (err) {
+        console.error("Error cargando usuarios:", err);
+        setError("Error cargando usuarios");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchUsers();
   }, []);
 
-  // Función para manejar el clic en una celda y redirigir
-  const handleCellClick = (rowData: any) => {
+  // Manejar clic en la celda para redirigir a perfil de usuario
+  const handleCellClick = (rowData: User) => {
     navigate(`/user_profile/${rowData.id}`, { state: { userData: rowData } });
   };
 
-  const renderProfilePicture = (rowData: any) => {
-    if (rowData.profile_image) {
+  // Renderizar imagen de perfil o iniciales
+  const renderProfilePicture = (rowData: User) => {
+    if (rowData.mail) {
       return (
         <img
-          src={rowData.profile_image}
+          src={`https://www.gravatar.com/avatar/${btoa(rowData.mail)}?d=identicon`}
           alt="Profile"
           className="w-10 h-10 rounded-full"
         />
       );
     } else {
-      const name = rowData.full_name || "";
+      const name = rowData.displayName || "";
       const initials = name
         .split(" ")
-        .map((word: string) => word.charAt(0))
+        .map((word) => word.charAt(0))
         .join("");
       return (
         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-white">
@@ -82,10 +65,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Filtrar usuarios según búsqueda
   const filteredData = users.filter((user) =>
     Object.values(user).some(
-      (val) =>
-        val && val.toString().toLowerCase().includes(search.toLowerCase())
+      (val) => val && val.toString().toLowerCase().includes(search.toLowerCase())
     )
   );
 
@@ -112,34 +95,63 @@ const Dashboard: React.FC = () => {
           <div className="bg-white p-6 shadow-lg rounded-xl w-full max-w-[1500px] h-full min-h-[60vh]">
             {/* Contenedor de la tarjeta */}
             <div className="card-content">
-              <DataTable
-                value={filteredData.slice(first, first + rows)}
-                className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
-              >
-                {/* Columna de Foto de Perfil */}
-                <Column
-                  header="Foto"
-                  body={renderProfilePicture}
-                  headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
-                  bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
-                />
-
-                {/* Otras columnas con datos del usuario */}
-                {["full_name", "email", "position"].map((field, index) => (
+              {loading ? (
+                <p>Cargando usuarios...</p>
+              ) : error ? (
+                <p>{error}</p>
+              ) : (
+                <DataTable
+                  value={filteredData.slice(first, first + rows)}
+                  className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
+                >
+                  {/* Columna de Foto de Perfil */}
                   <Column
-                    key={index}
-                    field={field}
-                    header={field.charAt(0).toUpperCase() + field.slice(1)}
+                    header="Foto"
+                    body={renderProfilePicture}
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
+                  />
+
+                  {/* Nombre Completo */}
+                  <Column
+                    field="displayName"
+                    header="Nombre"
                     headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
                     bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
                     body={(rowData) => (
                       <span onClick={() => handleCellClick(rowData)}>
-                        {rowData[field] || "No disponible"}
+                        {rowData.displayName || "No disponible"}
                       </span>
                     )}
                   />
-                ))}
-              </DataTable>
+
+                  {/* Correo Electrónico */}
+                  <Column
+                    field="mail"
+                    header="Correo"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
+                    body={(rowData) => (
+                      <span onClick={() => handleCellClick(rowData)}>
+                        {rowData.mail || "No disponible"}
+                      </span>
+                    )}
+                  />
+
+                  {/* Nombre de Usuario */}
+                  <Column
+                    field="userPrincipalName"
+                    header="Usuario"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
+                    body={(rowData) => (
+                      <span onClick={() => handleCellClick(rowData)}>
+                        {rowData.userPrincipalName || "No disponible"}
+                      </span>
+                    )}
+                  />
+                </DataTable>
+              )}
 
               {/* Paginador */}
               <div className="paginator-container flex justify-center mt-4 mb-6">

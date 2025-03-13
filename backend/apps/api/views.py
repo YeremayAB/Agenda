@@ -6,6 +6,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer
+import environ
+
+env = environ.Env()
+env.read_env()
+
+GRAPH_API_USERS_URL = "https://graph.microsoft.com/v1.0/users"
 
 User = get_user_model()
 
@@ -45,32 +51,36 @@ def validate_microsoft_token(request):
     else:
         return Response({'error': 'Token de Microsoft inválido'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
 @api_view(['GET'])
 def get_users(request):
-    tenant_id = env('MICROSOFT_TENANT_ID')
-    client_id = env('MICROSOFT_CLIENT_ID')
-    client_secret = env('MICROSOFT_CLIENT_SECRET')
-
-    # Endpoint para obtener el token de acceso
-    token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
-    token_data = {
-        "grant_type": "client_credentials",
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "scope": "https://graph.microsoft.com/.default"
-    }
-
     try:
-        token_response = requests.post(token_url, data=token_data)
-        token_response.raise_for_status()
-        access_token = token_response.json().get("access_token")
+        tenant_id = env('MICROSOFT_TENANT_ID')
+        client_id = env('MICROSOFT_CLIENT_ID')
+        client_secret = env('MICROSOFT_CLIENT_SECRET')
 
-        if not access_token:
-            return Response({"error": "No se pudo obtener el token de acceso"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+        token_data = {
+            "grant_type": "client_credentials",
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "scope": "https://graph.microsoft.com/.default"
+        }
+
+        # Obtener el token de acceso
+        token_response = requests.post(token_url, data=token_data)
+        token_json = token_response.json()
+
+        if "access_token" not in token_json:
+            return Response({"error": f"Error obteniendo token: {token_json}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        access_token = token_json["access_token"]
 
         headers = {"Authorization": f"Bearer {access_token}"}
         users_response = requests.get(GRAPH_API_USERS_URL, headers=headers)
-        users_response.raise_for_status()
+
+        if users_response.status_code != 200:
+            return Response({"error": f"Error en Microsoft Graph: {users_response.json()}"}, status=users_response.status_code)
 
         return Response(users_response.json(), status=status.HTTP_200_OK)
 
