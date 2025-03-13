@@ -15,48 +15,64 @@
     margin-bottom: 4rem;
 }
 
-.user-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 1rem;
-    object-fit: cover;
-    border: 2px solid #000000;
-    margin: 2rem;
-}
-
 .user-card {
-    background-color: white;
-    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgb(255, 255, 255);
     padding: 1rem;
+    border-radius: 30px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    width: 600px;
-    text-align: left;
+    width: 725px;
+    flex-direction: row;
 }
 
-.p-card .p-card-content {
-    padding: 0;
+.user-content-profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.user-avatar-profile {
+    width: 200px !important; ;  
+    height: 200px !important; ;  
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #000000;
+    margin-left: 8rem;
+  }
+/* Avatar que contiene las iniciales */
+/* .w-10 {
+    width: 2.5rem;
+    height: 2.5rem;
+} */
+.user-avatar-container-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; 
+}
+
+.user-info {
+    flex-grow: 1;
+    /* border: 2px solid #dadada; */
+    width: 300px;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-left: 4rem;
+    margin-right: 3rem;
 }
 
 .user-info p {
     margin: 0.5rem 0;
     color: #000000;
-    
-}
-
-.edit-button {
-    background-color: #6c8086;
-    color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 20px;
-    font-size: 1rem;
-    margin-top: 1rem;
 }
 
 .back-button {
-    position: relative; /* Cambia absolute a relative */
-    margin-top: 1rem; /* Agrega margen superior para separarlo del header */
-    left: 20px;
+    position: relative;
+    margin-top: 2rem;
+    margin-left: 2rem;
     width: 50px;
     height: 50px;
     font-size: 1.5rem;
@@ -69,48 +85,39 @@
     justify-content: center;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
-    margin-left: 2rem;
-    margin-top: 2rem;
 }
 
 .back-button .pi {
-    font-size: 1.5rem; /* Aumenta el tamaño */
-    font-weight: bold; /* Hace que la flecha se vea más gruesa */
+    font-size: 1.5rem;
+    font-weight: bold;
 }
-
 
 .back-button:hover {
     background-color: #f0f0f0;
     transform: scale(1.1);
 }
 
-.back-button .pi {
-    font-size: 1.2rem; /* Tamaño de la flecha */
-}
-
-/* Estilos para la imagen en el modal */
 .profile-modal-img {
     width: 100%;
-    max-width: 400px; /* Tamaño máximo para que no sea demasiado grande */
+    max-width: 400px;
     display: block;
-    margin: 0 auto; /* Centrar la imagen */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para efecto elevado */
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out;
 }
 
 .profile-modal-img:hover {
-    transform: scale(1.05); /* Efecto de agrandamiento al pasar el cursor */
+    transform: scale(1.05);
 }
 
-/* Ajustes en el modal */
 .p-dialog {
     border-radius: 12px;
     overflow: hidden;
 }
 
 .p-dialog .p-dialog-header {
-    background-color: #5B7D83; /* Color de fondo del header del modal */
+    background-color: #5B7D83;
     color: white;
     font-size: 1.2rem;
     font-weight: bold;
@@ -121,7 +128,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #f8f9fa; /* Color suave de fondo */
+    background: #f8f9fa;
     padding: 2rem;
 }
 
@@ -129,13 +136,4 @@
     background: #ffffff;
     text-align: center;
     padding: 1rem;
-}
-
-.p-dialog .p-dialog-header .p-dialog-header-icon {
-    width: 2rem;
-    height: 2rem;
-    color: #ffffff;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    transition:  box-shadow 0.2s;
 }

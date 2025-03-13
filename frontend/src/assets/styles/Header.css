@@ -51,15 +51,20 @@ body {
     transform: scale(1.1); 
 }
 
-.user-avatar1 {
-    width: 40px;
-    height: 40px;
-    border: 2px solid black;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.user-avatar1:hover {
+.user-avatar-header {
+    width: 2.5rem;  
+    height: 2.5rem;  
+    background-color: #e5e7eb;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+.user-avatar-header:hover {
     transform: scale(1.1); /* Efecto de zoom al pasar el mouse */
 }
 
