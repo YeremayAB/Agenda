@@ -13,9 +13,10 @@ export interface User {
   profile_image?: string | null;
   full_name?: string | null;
   phone?: string | null;
-  mobile_phone?: string | null;
+  mobilePhone?: string | null;
   department?: string | null;
   office?: string | null;
+  businessPhones?: string[] | null;  
 }
 
 export const getUsers = async (): Promise<{ users: User[] }> => {

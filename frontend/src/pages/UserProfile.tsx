@@ -87,7 +87,7 @@ const UserProfile: React.FC = () => {
     if (profileImage) {
       return <Avatar image={profileImage} className='user-avatar-profile' shape='circle' style={{ width: '100px', height: '100px', objectFit: 'cover' }} />;
     } else {
-      const name = user?.full_name || 'Usuario';
+      const name = user?.displayName|| 'Usuario';
       const initials = name.split(' ').map((word) => word.charAt(0)).join('');
       return <div className='w-20 h-20 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl'>{initials}</div>;
     }
@@ -108,8 +108,8 @@ const UserProfile: React.FC = () => {
             <div className='user-avatar-container-profile'>{renderProfilePicture()}</div>
             <div className='user-info'>
               <p><strong>Email:</strong> {user.mail}</p>
-              <p><strong>Teléfono:</strong> {user.phone}</p>
-              <p><strong>Teléfono móvil:</strong> {user.mobile_phone}</p>
+              <p><strong>Teléfono:</strong> {user.businessPhones}</p>
+              <p><strong>Teléfono móvil:</strong> {user.mobilePhone}</p>
               <p><strong>Posición:</strong> {user.jobTitle}</p>
               <p><strong>Departamento:</strong> {user.department}</p>
               <p><strong>Oficina:</strong> {user.office}</p>

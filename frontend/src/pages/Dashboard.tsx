@@ -16,9 +16,7 @@ const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
-    {}
-  );
+  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>( {});
   const navigate = useNavigate();
   const containsNumbers = (str: string) => /\d/.test(str);
 
@@ -34,8 +32,23 @@ const Dashboard: React.FC = () => {
           throw new Error("Error: La API no devolvió usuarios válidos.");
         }
 
-        setUsers(response.users);
-        fetchProfilePictures(response.users);
+        // Filtrar duplicados: si un usuario tiene un nombre de usuario con números, 
+        // lo eliminamos si ya existe uno sin números
+        const uniqueUsers: User[] = [];
+        const seenUsers = new Set<string>();
+
+        response.users.forEach((user) => {
+          const userPrincipalName = user.userPrincipalName || "";
+          const cleanUserPrincipalName = userPrincipalName.replace(/\d/g, ""); // Eliminar números
+
+          if (!seenUsers.has(cleanUserPrincipalName)) {
+            seenUsers.add(cleanUserPrincipalName);
+            uniqueUsers.push(user);
+          }
+        });
+
+        setUsers(uniqueUsers);
+        fetchProfilePictures(uniqueUsers);
       } catch (err) {
         console.error("❌ Error cargando usuarios:", err);
         setError("Error cargando usuarios");
@@ -241,13 +254,13 @@ const Dashboard: React.FC = () => {
                   />
 
                   <Column
-                    field="userPrincipalName"
+                    field="phone"
                     header="Número de teléfono"
                     headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
                     bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
                     body={(rowData) => (
                       <span onClick={() => handleCellClick(rowData)}>
-                        {rowData.phone || "No disponible"}
+                        {rowData.businessPhones|| "No disponible"}
                       </span>
                     )}
                   />
