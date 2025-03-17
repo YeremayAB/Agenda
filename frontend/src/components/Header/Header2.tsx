@@ -1,74 +1,61 @@
-import React, { useState, useEffect } from "react";
-import "../../assets/styles/header.css";
-import { Avatar } from "primereact/avatar"; // Importar Avatar de PrimeReact
+import React, { useState, useEffect } from 'react';
+import { Avatar } from 'primereact/avatar'; // Importar Avatar de PrimeReact
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import '../../assets/styles/header.css';
 
-const Header2 = () => {
+const Header2: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Obtener el ID del usuario desde localStorage
-    const storedUser = localStorage.getItem("user");
+    // Obtener el usuario desde localStorage
+    const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      const userId = parsedUser.id;
+      setUser(parsedUser); // Guardar datos básicos del usuario
 
-      // Realizar una solicitud para obtener los datos completos del usuario
-      const fetchUserData = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:3000/api/auth/users/${userId}`
-          );
-          const data = await response.json();
-          setUser(data); // Guardar los datos del usuario
-        } catch (error) {
-          console.error("Error al obtener los datos del usuario:", error);
-        } finally {
-          setLoading(false); // Finalizar el estado de carga
-        }
-      };
-
-      fetchUserData();
+      // Obtener foto de perfil si no está disponible
+      fetchProfilePicture(parsedUser);
+    } else {
+      setLoading(false);
     }
   }, []);
 
-  const handleLogout = async () => {
+  // Función para obtener la foto de perfil desde Microsoft Graph
+  const fetchProfilePicture = async (user: any) => {
+    const graphToken = localStorage.getItem('ms_token');
+    if (!graphToken) {
+      console.warn('⚠️ No se encontró el token de Microsoft Graph.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const refreshToken = localStorage.getItem("refresh_token"); // Obtén el refresh token del localStorage
-  
-      // Si no tienes un refresh token almacenado, rediriges directamente al login
-      if (!refreshToken) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/");
-        return;
-      }
-  
-      // Enviar el refresh token al servidor para invalidarlo
-      const response = await fetch("http://localhost:8000/api/logout/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refresh_token: refreshToken }),
-      });
-  
-      if (response.ok) {
-        // El logout fue exitoso
-        localStorage.removeItem("token");
-        localStorage.removeItem("refresh_token"); // Eliminar el refresh token también
-        localStorage.removeItem("user");
-        navigate("/"); // Redirigir al login
-      } else {
-        console.error("Error al cerrar sesión:", await response.json());
+      // Intentamos obtener la foto de perfil desde Microsoft Graph
+      const response = await axios.get(
+        `https://graph.microsoft.com/v1.0/users/${user.mail}/photo/$value`,
+        {
+          headers: {
+            Authorization: `Bearer ${graphToken}`,
+            'Content-Type': 'application/json',
+          },
+          responseType: 'blob',
+        }
+      );
+
+      if (response.status === 200) {
+        const imageUrl = URL.createObjectURL(response.data);
+        setProfileImage(imageUrl);
       }
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
+      console.warn('⚠️ No se pudo obtener la foto de perfil desde Microsoft Graph.');
+    } finally {
+      setLoading(false);
     }
   };
-  
 
   // Función para renderizar la imagen de perfil o las iniciales
   const renderProfilePicture = () => {
@@ -82,20 +69,19 @@ const Header2 = () => {
       );
     }
 
-    if (user?.profile_image) {
+    if (profileImage) {
       return (
         <Avatar
-          image={user.profile_image}
+          image={profileImage}
           shape="circle"
           className="w-10 h-10"
         />
       );
-    } else {
-      const name = user?.full_name || "";
-      const initials = name
-        .split(" ")
+    } else if (user?.displayName) {
+      const initials = user.displayName
+        .split(' ')
         .map((word: string) => word.charAt(0))
-        .join("");
+        .join('');
 
       return (
         <Avatar
@@ -104,7 +90,22 @@ const Header2 = () => {
           className="w-10 h-10 bg-gray-300 text-white"
         />
       );
+    } else {
+      return (
+        <Avatar
+          label="?"
+          shape="circle"
+          className="w-10 h-10 bg-gray-300 text-white"
+        />
+      );
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('ms_token');
+    navigate('/');
   };
 
   return (
@@ -118,9 +119,7 @@ const Header2 = () => {
           <img src="GrumasaLogo2.png" alt="Livvo Logo" className="logo-image" />
         </div>
 
-        {/* Sección derecha: Avatar y Cerrar sesión */}
         <div className="header-user">
-          {/* Mostrar la imagen del usuario o las iniciales */}
           <div className="user-avatar-header">{renderProfilePicture()}</div>
 
           <span className="logout-text" onClick={handleLogout}>

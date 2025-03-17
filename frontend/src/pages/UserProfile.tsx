@@ -1,37 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { Card } from "primereact/card";
-import { Avatar } from "primereact/avatar";
-import "../assets/styles/UserProfile.css";
-import { Button } from "primereact/button";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
-import Header2 from "../components/Header/Header2";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useEffect, useState, useCallback } from 'react';
+import { Card } from 'primereact/card';
+import { Avatar } from 'primereact/avatar';
+import { Button } from 'primereact/button';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Header2 from '../components/Header/Header2';
+import '../assets/styles/UserProfile.css';
+import { getUsers, User } from '../components/Login/services/UsersService';
 
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8000/api/users/${userId}/`
-        );
-        const data = await response.json();
-        setUser(data);
+        setLoading(true);
+        const response = await getUsers();
+        console.log('Usuarios recibidos:', response);
 
-        if (!data.profile_image) {
-          fetchMicrosoftProfileImage(data.email);
-        } else {
-          setProfileImage(data.profile_image);
+        if (!response || !response.users) {
+          throw new Error('Error: La API no devolvió usuarios válidos.');
         }
-      } catch (error) {
-        console.error("Error al obtener los datos del usuario:", error);
+
+        const foundUser = response.users.find((u: User) => u.id === userId);
+        if (!foundUser) {
+          throw new Error('Usuario no encontrado.');
+        }
+
+        setUser(foundUser);
+        fetchMicrosoftProfileImage(foundUser.mail ?? 'No disponible');
+      } catch (err) {
+        console.error('❌ Error cargando usuario:', err);
+        setError('Error cargando usuario');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -40,21 +47,24 @@ const UserProfile: React.FC = () => {
     }
   }, [userId]);
 
-  const fetchMicrosoftProfileImage = async (email: string) => {
+  const fetchMicrosoftProfileImage = useCallback(async (email: string) => {
     if (!email) return;
 
     try {
-      const graphToken = localStorage.getItem("ms_token");
-      if (!graphToken) return;
+      const graphToken = localStorage.getItem('ms_token');
+      if (!graphToken) {
+        console.warn('⚠️ No se encontró el token de Microsoft Graph.');
+        return;
+      }
 
       const response = await axios.get(
         `https://graph.microsoft.com/v1.0/users/${email}/photo/$value`,
         {
           headers: {
             Authorization: `Bearer ${graphToken}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-          responseType: "blob",
+          responseType: 'blob',
         }
       );
 
@@ -62,79 +72,47 @@ const UserProfile: React.FC = () => {
         const imageURL = URL.createObjectURL(response.data);
         setProfileImage(imageURL);
       }
-    } catch (error) {
-      console.error(`No se pudo obtener la imagen de ${email}:`, error);
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        console.warn(`🚫 No tienes permisos para ver la foto de ${email}.`);
+      } else if (error.response?.status === 404) {
+        console.warn(`⚠️ No hay foto de perfil para ${email}.`);
+      } else {
+        console.error(`❌ Error al obtener la imagen de ${email}:`, error);
+      }
     }
-  };
+  }, []);
 
   const renderProfilePicture = () => {
     if (profileImage) {
-      return (
-        <Avatar
-          image={profileImage}
-          className="user-avatar-profile"
-          shape="circle"
-          style={{ width: "100px", height: "100px", objectFit: "cover" }}
-        />
-      );
+      return <Avatar image={profileImage} className='user-avatar-profile' shape='circle' style={{ width: '100px', height: '100px', objectFit: 'cover' }} />;
     } else {
-      const name = user?.full_name || "";
-      const initials = name
-        .trim() 
-        .split(/\s+/)
-        .map((word: string) => word.charAt(0).toUpperCase()) 
-        .join("");
-      return (
-        <div className="w-20 h-20 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl">
-          {initials}
-        </div>
-      );
+      const name = user?.full_name || 'Usuario';
+      const initials = name.split(' ').map((word) => word.charAt(0)).join('');
+      return <div className='w-20 h-20 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl'>{initials}</div>;
     }
   };
 
-  if (!user) return <div>Cargando...</div>;
+  if (loading) return <div>Cargando usuario...</div>;
+  if (error) return <div>{error}</div>;
+  if (!user) return <div>No se encontró el usuario.</div>;
 
   return (
     <div>
       <Header2 />
-      <Button
-        icon="pi pi-arrow-left"
-        className="back-button"
-        onClick={() => navigate(-1)}
-      />
-      <div className="user-profile">
-        <h2 className="user-title">
-          {user.full_name} -{" "}
-          <strong>
-            {user.position
-              ? user.position.toUpperCase()
-              : "Posición no disponible"}
-          </strong>
-        </h2>
-        <Card className="user-card">
-          <div className="user-content-profile">
-            <div className="user-avatar-container-profile">
-              {renderProfilePicture()}
-            </div>
-            <div className="user-info">
-              <p>
-                <strong>Email:</strong> {user.email}
-              </p>
-              <p>
-                <strong>Teléfono:</strong> {user.phone}
-              </p>
-              <p>
-                <strong>Teléfono móvil:</strong> {user.mobile_phone}
-              </p>
-              <p>
-                <strong>Posición:</strong> {user.position}
-              </p>
-              <p>
-                <strong>Departamento:</strong> {user.department}
-              </p>
-              <p>
-                <strong>Oficina:</strong> {user.office}
-              </p>
+      <Button icon='pi pi-arrow-left' className='back-button' onClick={() => navigate(-1)} />
+      <div className='user-profile'>
+        <h2 className='user-title'>{user.displayName} - <strong>{user.jobTitle ? user.jobTitle.toUpperCase() : 'Posición no disponible'}</strong></h2>
+        <Card className='user-card'>
+          <div className='user-content-profile'>
+            <div className='user-avatar-container-profile'>{renderProfilePicture()}</div>
+            <div className='user-info'>
+              <p><strong>Email:</strong> {user.mail}</p>
+              <p><strong>Teléfono:</strong> {user.phone}</p>
+              <p><strong>Teléfono móvil:</strong> {user.mobile_phone}</p>
+              <p><strong>Posición:</strong> {user.jobTitle}</p>
+              <p><strong>Departamento:</strong> {user.department}</p>
+              <p><strong>Oficina:</strong> {user.office}</p>
             </div>
           </div>
         </Card>
