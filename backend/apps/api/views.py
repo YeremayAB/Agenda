@@ -15,8 +15,43 @@ GRAPH_API_USERS_URL = "https://graph.microsoft.com/v1.0/users"
 
 User = get_user_model()
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+import requests
+from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+
 @api_view(['POST'])
 def validate_microsoft_token(request):
+    """
+    Valida un token de Microsoft y autentica al usuario en el sistema.
+
+    **Parámetros:**
+        - request (Request): Solicitud HTTP que debe contener el token de Microsoft en el cuerpo (`msToken`).
+
+    **Proceso:**
+        1. Obtiene el token de Microsoft desde la solicitud.
+        2. Realiza una solicitud a Microsoft Graph para obtener los datos del usuario.
+        3. Extrae el email del usuario desde la respuesta de Microsoft.
+        4. Busca o crea un usuario en la base de datos con los datos obtenidos.
+        5. Genera un token JWT de acceso y refresh para el usuario autenticado.
+
+    **Salida:**
+        - (Response): Respuesta JSON con:
+            - `status` (str): "ok" si la autenticación es exitosa.
+            - `access` (str): Token de acceso generado.
+            - `refresh` (str): Token de actualización generado.
+            - `user` (dict): Datos del usuario obtenidos desde Microsoft.
+
+    **Códigos de estado:**
+        - 200: Autenticación exitosa.
+        - 400: Token no proporcionado o datos insuficientes en la respuesta de Microsoft.
+        - 401: Token de Microsoft inválido.
+
+    **Excepciones:**
+        - Puede fallar si el token de Microsoft es incorrecto o si hay problemas con la API de Microsoft.
+    """
     ms_token = request.data.get('msToken')
     if not ms_token:
         return Response({'error': 'Token no proporcionado'}, status=status.HTTP_400_BAD_REQUEST)

@@ -3,29 +3,40 @@ import { Avatar } from 'primereact/avatar'; // Importar Avatar de PrimeReact
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../assets/styles/header.css';
+import { User } from '../Login/services/UsersService';
 
+/**
+ * Componente del encabezado con la información del usuario.
+ * - Obtiene los datos del usuario desde `localStorage`.
+ * - Recupera la foto de perfil desde Microsoft Graph.
+ * - Muestra las iniciales si no hay imagen de perfil disponible.
+ */
 const Header2: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  /**
+   * Al montar el componente, obtiene el usuario desde `localStorage`
+   * y, si es necesario, intenta recuperar su imagen de perfil.
+   */
   useEffect(() => {
-    // Obtener el usuario desde localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser); // Guardar datos básicos del usuario
-
-      // Obtener foto de perfil si no está disponible
+      const parsedUser: User = JSON.parse(storedUser);
+      setUser(parsedUser);
       fetchProfilePicture(parsedUser);
     } else {
       setLoading(false);
     }
   }, []);
 
-  // Función para obtener la foto de perfil desde Microsoft Graph
-  const fetchProfilePicture = async (user: any) => {
+  /**
+   * Obtiene la foto de perfil desde Microsoft Graph.
+   * Si no es posible, se maneja el error sin interrumpir la aplicación.
+   */
+  const fetchProfilePicture = async (user: User) => {
     const graphToken = localStorage.getItem('ms_token');
     if (!graphToken) {
       console.warn('⚠️ No se encontró el token de Microsoft Graph.');
@@ -34,7 +45,6 @@ const Header2: React.FC = () => {
     }
 
     try {
-      // Intentamos obtener la foto de perfil desde Microsoft Graph
       const response = await axios.get(
         `https://graph.microsoft.com/v1.0/users/${user.mail}/photo/$value`,
         {
@@ -57,7 +67,10 @@ const Header2: React.FC = () => {
     }
   };
 
-  // Función para renderizar la imagen de perfil o las iniciales
+  /**
+   * Renderiza la imagen de perfil o, si no está disponible,
+   * muestra las iniciales del usuario.
+   */
   const renderProfilePicture = () => {
     if (loading) {
       return (
@@ -70,19 +83,12 @@ const Header2: React.FC = () => {
     }
 
     if (profileImage) {
-      return (
-        <Avatar
-          image={profileImage}
-          shape="circle"
-          className="w-10 h-10"
-        />
-      );
+      return <Avatar image={profileImage} shape="circle" className="w-10 h-10" />;
     } else if (user?.displayName) {
       const initials = user.displayName
         .split(' ')
         .map((word: string) => word.charAt(0))
         .join('');
-        
 
       return (
         <Avatar
@@ -102,13 +108,15 @@ const Header2: React.FC = () => {
     }
   };
 
+  /**
+   * Cierra sesión, eliminando los datos del usuario y los tokens.
+   */
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('ms_token');
     navigate('/');
   };
-
   return (
     <header className="header">
       <div className="header-content">
@@ -117,7 +125,7 @@ const Header2: React.FC = () => {
 
         {/* Sección central: Logo */}
         <div className="header-logo">
-          <img src="GrumasaLogoDef.png" alt="Grumasa Logo" className="logo-image" />
+          <img src="/GrumasaLogoDef.png" alt="Grumasa Logo" className="logo-image" />
         </div>
 
         <div className="header-user">

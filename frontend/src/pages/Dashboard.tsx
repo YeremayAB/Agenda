@@ -4,7 +4,6 @@ import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
-import { Dropdown } from "primereact/dropdown";
 import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
 import { getUsers, User } from "../components/Login/services/UsersService";
