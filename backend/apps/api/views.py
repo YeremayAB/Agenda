@@ -106,62 +106,23 @@ def get_user(request, user_id):
     except User.DoesNotExist:
         return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-# import requests
-# from rest_framework.decorators import api_view
-# from rest_framework.response import Response
-# from .models import User
- 
-# GRAPH_API_URL = "https://graph.microsoft.com/v1.0/me"
- 
-# @api_view(['POST'])
-# def validate_microsoft_token(request):
-#     """ Valida el token de Microsoft y registra automáticamente el usuario en la base de datos. """
-#     token = request.data.get('token')
-#     if not token:
-#         return Response({'error': 'Token no proporcionado'}, status=400)
- 
-#     headers = {'Authorization': f'Bearer {token}'}
-#     response = requests.get(GRAPH_API_URL, headers=headers)
- 
-#     if response.status_code == 200:
-#         user_data = response.json()
- 
-#         # Extraer los datos necesarios
-#         email = user_data.get('mail') or user_data.get('userPrincipalName')  # Asegurar el email
-#         name = user_data.get('displayName', 'Usuario Desconocido')
-#         position = user_data.get('jobTitle', 'No especificado')
-#         profile_picture_url = "https://graph.microsoft.com/v1.0/me/photo/$value"  # URL de la imagen
-#         # Registrar usuario en la base de datos (o actualizar si ya existe)
-#         user, created = User.objects.update_or_create(
-#             email=email,
-#             defaults={
-#                 "name": name,
-#                 "position": position,
-#                 "profile_image": profile_picture_url,
-#                 "status": "Activo",
-#             }
-#         )
- 
-#         return Response({
-#             'status': 'ok',
-#             'user': {
-#                 'id': user.id,
-#                 'name': user.name,
-#                 'email': user.email,
-#                 'position': user.position,
-#                 'profilePicture': user.profile_image,
-#             },
-#             'redirect_url': '/dashboard',
-#             'message': 'Usuario registrado correctamente' if created else 'Usuario actualizado'
-#         })
- 
-#     elif response.status_code == 401:
-#         return Response({'error': 'Token inválido o expirado'}, status=401)
- 
-#     return Response({'error': 'Error al obtener datos del usuario'}, status=response.status_code)
- 
- 
-# @api_view(['GET'])
-# def auth_callback(request):
-#     """ Manejo del callback de autenticación de Microsoft """
-#     return Response({'message': 'Callback recibido'})
+@api_view(['POST'])
+def logout(request):
+    try:
+        # Obtén el token de refresco del encabezado Authorization (si lo estás pasando)
+        refresh_token = request.data.get('refresh_token')
+        
+        if not refresh_token:
+            return Response({'error': 'No se proporcionó un token de refresco'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verificar si el token de refresco es válido
+        try:
+            refresh = RefreshToken(refresh_token)
+            refresh.blacklist()  # Agrega el token a la lista negra para invalidarlo
+
+            return Response({'status': 'success', 'message': 'Sesión cerrada correctamente'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': 'Token inválido o expirado'}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({'error': f'Error al cerrar sesión: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
