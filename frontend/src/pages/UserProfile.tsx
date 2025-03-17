@@ -1,64 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { Card } from 'primereact/card';
-import { Avatar } from 'primereact/avatar';
-import '../assets/styles/UserProfile.css';
-import { Button } from 'primereact/button';
-import 'primereact/resources/themes/lara-light-indigo/theme.css'; // Tema PrimeReact
-import 'primereact/resources/primereact.min.css'; // Estilos de PrimeReact
-import 'primeicons/primeicons.css';
-import Header2 from '../components/Header/Header2';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-
-const GRAPH_PHOTO_ENDPOINT =
-  'https://graph.microsoft.com/v1.0/users/{userId}/photo/$value';
+import React, { useState, useEffect } from "react";
+import { Card } from "primereact/card";
+import { Avatar } from "primereact/avatar";
+import "../assets/styles/UserProfile.css";
+import { Button } from "primereact/button";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import Header2 from "../components/Header/Header2";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const UserProfile: React.FC = () => {
-  const { userId } = useParams<{ userId: string }>(); // Obtén el ID desde la URL
+  const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  // Solicitar datos del usuario al cargar el componente
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/auth/users/${userId}`
+          `http://localhost:8000/api/users/${userId}/`
         );
         const data = await response.json();
         setUser(data);
 
-        // Si el usuario no tiene imagen en la API local, buscar en Microsoft Graph
         if (!data.profile_image) {
-          fetchMicrosoftProfileImage();
+          fetchMicrosoftProfileImage(data.email);
         } else {
           setProfileImage(data.profile_image);
         }
       } catch (error) {
-        console.error('Error al obtener los datos del usuario:', error);
+        console.error("Error al obtener los datos del usuario:", error);
       }
     };
 
-    fetchUser();
+    if (userId) {
+      fetchUser();
+    }
   }, [userId]);
 
-  // Obtener la imagen de Microsoft Graph
-  const fetchMicrosoftProfileImage = async () => {
+  const fetchMicrosoftProfileImage = async (email: string) => {
+    if (!email) return;
+
     try {
-      const graphToken = localStorage.getItem('ms_token');
-      if (!graphToken) {
-        console.warn('⚠️ No se encontró el token de Microsoft Graph.');
-        return;
-      }
+      const graphToken = localStorage.getItem("ms_token");
+      if (!graphToken) return;
 
       const response = await axios.get(
-        `https://graph.microsoft.com/v1.0/users/${user.userPrincipalName}/photo/$value`,
+        `https://graph.microsoft.com/v1.0/users/${email}/photo/$value`,
         {
           headers: {
             Authorization: `Bearer ${graphToken}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          responseType: 'blob',
+          responseType: "blob",
         }
       );
 
@@ -67,10 +63,7 @@ const UserProfile: React.FC = () => {
         setProfileImage(imageURL);
       }
     } catch (error) {
-      console.error(
-        `❌ No se pudo obtener la imagen de ${user.full_name}:`,
-        error
-      );
+      console.error(`No se pudo obtener la imagen de ${email}:`, error);
     }
   };
 
@@ -79,21 +72,20 @@ const UserProfile: React.FC = () => {
       return (
         <Avatar
           image={profileImage}
-          className='user-avatar-profile'
-          shape='circle'
-          style={{ width: '200px', height: '200px', objectFit: 'cover' }}
+          className="user-avatar-profile"
+          shape="circle"
+          style={{ width: "100px", height: "100px", objectFit: "cover" }}
         />
       );
     } else {
-      // Si no hay imagen de perfil, mostrar las iniciales
-      const name = user?.full_name || '';
+      const name = user?.full_name || "";
       const initials = name
-        .split(' ')
-        .map((word) => word.charAt(0))
-        .join('');
-
+        .trim() 
+        .split(/\s+/)
+        .map((word: string) => word.charAt(0).toUpperCase()) 
+        .join("");
       return (
-        <div className='w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl'>
+        <div className="w-20 h-20 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl">
           {initials}
         </div>
       );
@@ -105,29 +97,26 @@ const UserProfile: React.FC = () => {
   return (
     <div>
       <Header2 />
-      {/* Botón de regreso */}
       <Button
-        icon='pi pi-arrow-left'
-        className='back-button'
-        onClick={() => window.history.back()}
+        icon="pi pi-arrow-left"
+        className="back-button"
+        onClick={() => navigate(-1)}
       />
-      <div className='user-profile'>
-        <h2 className='user-title'>
-          {user.full_name} -{' '}
+      <div className="user-profile">
+        <h2 className="user-title">
+          {user.full_name} -{" "}
           <strong>
             {user.position
               ? user.position.toUpperCase()
-              : 'Posición no disponible'}
+              : "Posición no disponible"}
           </strong>
         </h2>
-        {/* Tarjeta con los datos del usuario */}
-        <Card className='user-card'>
-          <div className='user-content-profile'>
-            {/* Aquí llamamos a renderProfilePicture para mostrar la imagen o las iniciales */}
-            <div className='user-avatar-container-profile'>
+        <Card className="user-card">
+          <div className="user-content-profile">
+            <div className="user-avatar-container-profile">
               {renderProfilePicture()}
             </div>
-            <div className='user-info'>
+            <div className="user-info">
               <p>
                 <strong>Email:</strong> {user.email}
               </p>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "../../assets/styles/header.css";
 import { Avatar } from "primereact/avatar"; // Importar Avatar de PrimeReact
+import { useNavigate } from 'react-router-dom';
 
 const Header2 = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Obtener el ID del usuario desde localStorage
@@ -34,17 +36,39 @@ const Header2 = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:8000/api/logout/", {
+      const refreshToken = localStorage.getItem("refresh_token"); // Obtén el refresh token del localStorage
+  
+      // Si no tienes un refresh token almacenado, rediriges directamente al login
+      if (!refreshToken) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/");
+        return;
+      }
+  
+      // Enviar el refresh token al servidor para invalidarlo
+      const response = await fetch("http://localhost:8000/api/logout/", {
         method: "POST",
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
       });
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+  
+      if (response.ok) {
+        // El logout fue exitoso
+        localStorage.removeItem("token");
+        localStorage.removeItem("refresh_token"); // Eliminar el refresh token también
+        localStorage.removeItem("user");
+        navigate("/"); // Redirigir al login
+      } else {
+        console.error("Error al cerrar sesión:", await response.json());
+      }
     } catch (error) {
-      console.error("Error cerrando sesión", error);
+      console.error("Error al cerrar sesión:", error);
     }
   };
+  
 
   // Función para renderizar la imagen de perfil o las iniciales
   const renderProfilePicture = () => {
