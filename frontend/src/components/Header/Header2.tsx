@@ -116,7 +116,7 @@ const Header2: React.FC = () => {
 
         {/* Sección central: Logo */}
         <div className="header-logo">
-          <img src="GrumasaLogo2.png" alt="Livvo Logo" className="logo-image" />
+          <img src="GrumasaLogoDef.png" alt="Livvo Logo" className="logo-image" />
         </div>
 
         <div className="header-user">

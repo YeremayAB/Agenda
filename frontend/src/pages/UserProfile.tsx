@@ -2,11 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from 'primereact/card';
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header2 from '../components/Header/Header2';
 import '../assets/styles/UserProfile.css';
 import { getUsers, User } from '../components/Login/services/UsersService';
+import 'primeicons/primeicons.css';
 
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -15,6 +17,7 @@ const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -85,7 +88,15 @@ const UserProfile: React.FC = () => {
 
   const renderProfilePicture = () => {
     if (profileImage) {
-      return <Avatar image={profileImage} className='user-avatar-profile' shape='circle' style={{ width: '100px', height: '100px', objectFit: 'cover' }} />;
+      return (
+        <Avatar 
+          image={profileImage} 
+          className='user-avatar-profile' 
+          shape='circle' 
+          style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }}
+          onClick={() => setModalVisible(true)}
+        />
+      );
     } else {
       const name = user?.displayName|| 'Usuario';
       const initials = name.split(' ').map((word) => word.charAt(0)).join('');
@@ -117,6 +128,25 @@ const UserProfile: React.FC = () => {
           </div>
         </Card>
       </div>
+      <Dialog
+        visible={modalVisible}
+        onHide={() => setModalVisible(false)}
+        header="Foto de Perfil"
+        className="p-fluid"
+        style={{ width: '500px',  height: '525px' }}
+      >
+        {profileImage ? (
+          <img
+            src={profileImage}
+            alt="Foto de Perfil"
+            className="profile-modal-img"
+            onClick={() => setModalVisible(false)}
+            style={{ cursor: 'pointer' }}
+          />
+        ) : (
+          <div className="text-center">No hay imagen disponible</div>
+        )}
+      </Dialog>
     </div>
   );
 };

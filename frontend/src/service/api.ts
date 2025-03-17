@@ -16,7 +16,6 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
 // Refrescar JWToken en caso de 401
 api.interceptors.response.use(
   (response) => response,
@@ -40,5 +39,4 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 export default api;

@@ -29,7 +29,7 @@ const AuthCallback: React.FC = () => {
     
                 console.log("Token recibido:", token);
                 
-                const backendResponse = await fetch('http://localhost:8000/api/auth/validate-microsoft/', {
+                const backendResponse = await fetch('http://localhost:3000/auth/validate-microsoft/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token })

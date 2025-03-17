@@ -31,14 +31,12 @@ def validate_microsoft_token(request):
         email = user_data.get('mail') or user_data.get('userPrincipalName')
         if not email:
             return Response({'error': 'No se encontró email en los datos del usuario'}, status=status.HTTP_400_BAD_REQUEST)
-
         # Busca o crea el usuario
         user, created = User.objects.get_or_create(email=email, defaults={
             'username': email.split('@')[0],
             'first_name': user_data.get('givenName'),
             'last_name': user_data.get('surname')
         })
-
         # Genera un token JWT (refresh + access) usando SimpleJWT
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
