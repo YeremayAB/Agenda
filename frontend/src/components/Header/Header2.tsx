@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Avatar } from 'primereact/avatar'; // Importar Avatar de PrimeReact
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../../assets/styles/header.css';
+import React, { useState, useEffect } from "react";
+import { Avatar } from "primereact/avatar";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../../assets/styles/header.css";
 
 const Header2: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -11,53 +11,65 @@ const Header2: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Obtener el usuario desde localStorage
-    const storedUser = localStorage.getItem('user');
+    // Obtener el usuario almacenado en el localStorage al montar el componente
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser); // Guardar datos básicos del usuario
+      setUser(parsedUser);
 
-      // Obtener foto de perfil si no está disponible
+      // Si el usuario tiene un email, intentar cargar su foto de perfil desde Microsoft Graph
       fetchProfilePicture(parsedUser);
     } else {
-      setLoading(false);
+      setLoading(false); //si no hay usuario almacenado, detener la carga
     }
   }, []);
 
-  // Función para obtener la foto de perfil desde Microsoft Graph
+  /**
+   * Obtiene la foto de perfil del usuario desde Microsoft Graph API.
+   * @param {any} user - Objeto del usuario obtenido desde el localStorage.
+   */
   const fetchProfilePicture = async (user: any) => {
-    const graphToken = localStorage.getItem('ms_token');
+    const graphToken = localStorage.getItem("ms_token");
     if (!graphToken) {
-      console.warn('⚠️ No se encontró el token de Microsoft Graph.');
+      console.warn("⚠️ No se encontró el token de Microsoft Graph.");
       setLoading(false);
       return;
     }
 
     try {
-      // Intentamos obtener la foto de perfil desde Microsoft Graph
+      // Petición a Microsoft Graph API para obtener la foto de perfil del usuario
       const response = await axios.get(
         `https://graph.microsoft.com/v1.0/users/${user.mail}/photo/$value`,
         {
           headers: {
             Authorization: `Bearer ${graphToken}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          responseType: 'blob',
+          responseType: "blob", //Recibir la imagen como blob
         }
       );
 
       if (response.status === 200) {
+        //Convertir la respuesta en una URL válida para la imagen
         const imageUrl = URL.createObjectURL(response.data);
         setProfileImage(imageUrl);
       }
     } catch (error) {
-      console.warn('⚠️ No se pudo obtener la foto de perfil desde Microsoft Graph.');
+      console.warn(
+        "⚠️ No se pudo obtener la foto de perfil desde Microsoft Graph."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Función para renderizar la imagen de perfil o las iniciales
+  /**
+   *Renderiza la imagen de perfil del usuario
+   *Si la imagen no está disponible, muestra las iniciales del nombre del usuario
+   *Si no hay nombre, muestra un '?' por defecto
+   *
+   * @returns {JSX.Element} Avatar del usuario.
+   */
   const renderProfilePicture = () => {
     if (loading) {
       return (
@@ -71,18 +83,13 @@ const Header2: React.FC = () => {
 
     if (profileImage) {
       return (
-        <Avatar
-          image={profileImage}
-          shape="circle"
-          className="w-10 h-10"
-        />
+        <Avatar image={profileImage} shape="circle" className="w-10 h-10" />
       );
     } else if (user?.displayName) {
       const initials = user.displayName
-        .split(' ')
+        .split(" ")
         .map((word: string) => word.charAt(0))
-        .join('');
-        
+        .join("");
 
       return (
         <Avatar
@@ -102,11 +109,16 @@ const Header2: React.FC = () => {
     }
   };
 
+
+  /**
+   * Cierra la sesión del usuario.
+   * Elimina los datos del usuario almacenados en localStorage y redirige a la página del Login.
+   */
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    localStorage.removeItem('ms_token');
-    navigate('/');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("ms_token");
+    navigate("/"); //Redirige a la pantalla del Login.
   };
 
   return (
@@ -117,7 +129,11 @@ const Header2: React.FC = () => {
 
         {/* Sección central: Logo */}
         <div className="header-logo">
-          <img src="GrumasaLogoDef.png" alt="Grumasa Logo" className="logo-image" />
+          <img
+            src="/GrumasaLogoDef.png"
+            alt="Grumasa Logo"
+            className="logo-image"
+          />
         </div>
 
         <div className="header-user">

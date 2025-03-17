@@ -52,6 +52,15 @@ def validate_microsoft_token(request):
 
 @api_view(['GET'])
 def get_users(request):
+    """
+    Vista para obtener todos los usuarios de Microsoft Graph API con paginación.
+    - Utiliza credenciales de cliente para obtener un token de acceso.
+    - Recupera todos los usuarios disponibles en Microsoft Graph API, manejando la paginación automáticamente.
+
+    Respuestas:
+        - 200 OK: Devuelve una lista de todos los usuarios con su cantidad total.
+        - 500 Internal Server Error: Si ocurre un error al obtener el token o al llamar a Microsoft Graph API.
+    """
     try:
         tenant_id = env('MICROSOFT_TENANT_ID')
         client_id = env('MICROSOFT_CLIENT_ID')
@@ -99,6 +108,18 @@ def get_users(request):
 
 @api_view(['GET'])
 def get_user(request, user_id):
+    """
+    Vista para obtener los detalles de un usuario específico por su ID.
+    - Busca al usuario en la base de datos utilizando el modelo User.
+    - Serializa los datos del usuario y los devuelve en formato JSON.
+
+    Parámetros:
+        - user_id (int): ID del usuario a buscar
+
+    Respuestas:
+        - 200 OK: Devuelve los datos serializados del usuario si se encuentra.
+        - 404 Not Found: Si el usuario no existe en la base de datos.
+    """
     try:
         user = User.objects.get(id=user_id)
         serializer= UserSerializer(user)
@@ -108,8 +129,22 @@ def get_user(request, user_id):
 
 @api_view(['POST'])
 def logout(request):
+    """
+    Vista para cerrar sesión invalidando un token de refresco.
+    - Verifica si el token de refresco proporcionado es válido.
+    - Si es válido, agrega el token a la lista negra para invalidarlo.
+
+    Parámetros:
+        - refresh_token (str): Tokem de refresco proporcionado en el cuerpo de la solicitud.
+
+    Respuestas:
+        - 200 OK: Sesión cerrada correctamente.
+        - 400 Bad Request: Si no se proporciona un token de refresco o si el token es inválido/expirado.
+        - 500 Internal Server Error: Si ocurre un error inesperado durante el proceso.
+    """
+
     try:
-        # Obtén el token de refresco del encabezado Authorization (si lo estás pasando)
+        # Obtén el token de refresco del encabezado Authorization
         refresh_token = request.data.get('refresh_token')
         
         if not refresh_token:

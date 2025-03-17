@@ -4,11 +4,16 @@ import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
-import { Dropdown } from "primereact/dropdown";
+// import { Dropdown } from "primereact/dropdown";
 import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
 import { getUsers, User } from "../components/Login/services/UsersService";
 import axios from "axios";
+
+/**
+ * Componente principal del panel de administración (Dashboard).
+ * Muestra una lista de usuarios de búqueda y paginación.
+ */
 
 const Dashboard: React.FC = () => {
   const [first, setFirst] = useState(0);
@@ -17,11 +22,22 @@ const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>( {});
+  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
+    {}
+  );
+
+  /**
+   * Verifica si un string contienen números
+   */
   const navigate = useNavigate();
   const containsNumbers = (str: string) => /\d/.test(str);
 
-  // Obtener usuarios del servicio
+  /**
+   * Obtiene los usuarios desde el servicio 'getUsers()', filtra duplicados, y no muestra los usuarios
+   * con números en su nombre de usuario.
+   * 
+   * Se ejecuta en 'useEffect()' al montar el componente
+   */
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -33,23 +49,18 @@ const Dashboard: React.FC = () => {
           throw new Error("Error: La API no devolvió usuarios válidos.");
         }
 
-        // Filtrar duplicados: si un usuario tiene un nombre de usuario con números, 
-        // lo eliminamos si ya existe uno sin números
-        const uniqueUsers: User[] = [];
-        const seenUsers = new Set<string>();
+        // Filtrar usuarios con números en su 'userPrincipalName'
+        const filteredUsers: User[] = response.users.filter(
+          (user) => !containsNumbers(user.userPrincipalName || "")
+        );
 
-        response.users.forEach((user) => {
-          const userPrincipalName = user.userPrincipalName || "";
-          const cleanUserPrincipalName = userPrincipalName.replace(/\d/g, ""); // Eliminar números
+        // Ordenar usuarios alfabéticamente por `displayName`
+        const sortedUsers = filteredUsers.sort((a, b) =>
+          (a.displayName || "").localeCompare(b.displayName || "")
+        );
 
-          if (!seenUsers.has(cleanUserPrincipalName)) {
-            seenUsers.add(cleanUserPrincipalName);
-            uniqueUsers.push(user);
-          }
-        });
-
-        setUsers(uniqueUsers);
-        fetchProfilePictures(uniqueUsers);
+        setUsers(sortedUsers);
+        fetchProfilePictures(sortedUsers);
       } catch (err) {
         console.error("❌ Error cargando usuarios:", err);
         setError("Error cargando usuarios");
@@ -61,7 +72,10 @@ const Dashboard: React.FC = () => {
     fetchUsers();
   }, []);
 
-  // Obtener imágenes desde Microsoft Graph si no están en la API local
+  /**
+   * Obtiene imágenes de perfil de los usuarios desde Microsoft Graph API.
+   * @param {User[]} users - Lista de usuarios a procesar.
+   */
   const fetchProfilePictures = async (users: User[]) => {
     const graphToken = localStorage.getItem("ms_token");
     if (!graphToken) {
@@ -92,10 +106,6 @@ const Dashboard: React.FC = () => {
             if (response.status === 200) {
               const imageUrl = URL.createObjectURL(response.data);
               images[user.id] = imageUrl;
-              console.log(
-                `✅ Imagen encontrada para ${user.userPrincipalName}:`,
-                imageUrl
-              );
             }
           } catch (error: any) {
             if (error.response?.status === 403) {
@@ -120,7 +130,11 @@ const Dashboard: React.FC = () => {
     setProfileImages((prevImages) => ({ ...prevImages, ...images }));
   };
 
-  // Renderizar imagen de perfil o iniciales
+  /**
+   * Renderiza la imagen de perfil de un usuario o sus iniciales si no tiene imagen
+   * @param {User} rowData - Datos del usuario
+   * @returns {JSX.Element} - Imagen o iniciales en un div
+   */
   const renderProfilePicture = (rowData: User) => {
     const profileImage = rowData.profile_image || profileImages[rowData.id];
 
@@ -160,7 +174,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Manejar clic en la celda para redirigir a perfil de usuario
+  /**
+   * Redirige a la página de perfil del usuario.
+   * @param {User} rowData - Datos del usuario seleccionado.
+   */
   const handleCellClick = (rowData: User) => {
     navigate(`/user_profile/${rowData.id}`, { state: { userData: rowData } });
   };
@@ -209,7 +226,7 @@ const Dashboard: React.FC = () => {
                   <Column
                     header="Foto"
                     body={renderProfilePicture}
-                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3 flex justify-center items-center"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3 justify-center items-center"
                     bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200 flex justify-center items-center"
                   />
 
@@ -261,7 +278,7 @@ const Dashboard: React.FC = () => {
                     bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
                     body={(rowData) => (
                       <span onClick={() => handleCellClick(rowData)}>
-                        {rowData.businessPhones|| "No disponible"}
+                        {rowData.businessPhones || "No disponible"}
                       </span>
                     )}
                   />
@@ -270,7 +287,6 @@ const Dashboard: React.FC = () => {
                 <p>No hay usuarios disponibles.</p>
               )}
 
-              {/* Paginador con Selector de Tamaño */}
               <div className="paginator-container flex items-center justify-between mt-4 mb-6">
                 {/* Paginador */}
                 <Paginator
@@ -286,8 +302,10 @@ const Dashboard: React.FC = () => {
 
                 {/* Selector de Tamaño */}
                 <div className="flex items-center">
-                  <label htmlFor="table-size" className="mr-2 font-semibold">
-                  </label>
+                  <label
+                    htmlFor="table-size"
+                    className="mr-2 font-semibold"
+                  ></label>
                   <select
                     id="table-size"
                     value={rows}
