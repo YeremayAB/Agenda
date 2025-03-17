@@ -1,9 +1,36 @@
-import { useNavigate } from "react-router-dom"; // Para redirigir al perfil y al logout
+import React, { useState, useEffect } from "react";
 import "../../assets/styles/header.css";
-import { Avatar } from "primereact/avatar";
+import { Avatar } from "primereact/avatar"; // Importar Avatar de PrimeReact
 
 const Header2 = () => {
-  const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    // Obtener el ID del usuario desde localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      const userId = parsedUser.id;
+
+      // Realizar una solicitud para obtener los datos completos del usuario
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/auth/users/${userId}`
+          );
+          const data = await response.json();
+          setUser(data); // Guardar los datos del usuario
+        } catch (error) {
+          console.error("Error al obtener los datos del usuario:", error);
+        } finally {
+          setLoading(false); // Finalizar el estado de carga
+        }
+      };
+
+      fetchUserData();
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -12,15 +39,48 @@ const Header2 = () => {
         credentials: "include",
       });
 
-      localStorage.removeItem("token"); // Eliminar el token si se usa
-      navigate("/login"); // Redirigir a la página de login
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     } catch (error) {
       console.error("Error cerrando sesión", error);
     }
   };
 
-  const handleProfileClick = () => {
-    navigate("/perfil"); // Redirige a la página del perfil del usuario
+  // Función para renderizar la imagen de perfil o las iniciales
+  const renderProfilePicture = () => {
+    if (loading) {
+      return (
+        <Avatar
+          icon="pi pi-spin pi-spinner"
+          shape="circle"
+          className="w-10 h-10 bg-gray-300 text-white"
+        />
+      );
+    }
+
+    if (user?.profile_image) {
+      return (
+        <Avatar
+          image={user.profile_image}
+          shape="circle"
+          className="w-10 h-10"
+        />
+      );
+    } else {
+      const name = user?.full_name || "";
+      const initials = name
+        .split(" ")
+        .map((word: string) => word.charAt(0))
+        .join("");
+
+      return (
+        <Avatar
+          label={initials}
+          shape="circle"
+          className="w-10 h-10 bg-gray-300 text-white"
+        />
+      );
+    }
   };
 
   return (
@@ -31,23 +91,21 @@ const Header2 = () => {
 
         {/* Sección central: Logo */}
         <div className="header-logo">
-          <img src="GrumasaLogo3.png" alt="Livvo Logo" className="logo-image" />
+          <img src="GrumasaLogo2.png" alt="Livvo Logo" className="logo-image" />
         </div>
 
         {/* Sección derecha: Avatar y Cerrar sesión */}
         <div className="header-user">
-          <Avatar 
-            image="/default-avatar2.jpg" 
-            shape="circle" 
-            className="user-avatar1"
-            onClick={handleProfileClick} // Redirige al perfil
-            style={{ cursor: "pointer" }} // Hace clickeable el avatar
-          />
-          <span className="logout-text" onClick={handleLogout}>Cerrar sesión</span>
+          {/* Mostrar la imagen del usuario o las iniciales */}
+          <div className="user-avatar-header">{renderProfilePicture()}</div>
+
+          <span className="logout-text" onClick={handleLogout}>
+            Cerrar sesión
+          </span>
         </div>
       </div>
     </header>
-  ); 
+  );
 };
 
 export default Header2;

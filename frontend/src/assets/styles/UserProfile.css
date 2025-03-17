@@ -27,20 +27,31 @@
     flex-direction: row;
 }
 
-.user-content {
+.user-content-profile {
     display: flex;
     align-items: center;
     gap: 20px;
     width: 100%;
 }
 
-.user-avatar {
-    width: 150px;
-    height: 150px;
+.user-avatar-profile {
+    width: 200px !important; ;  
+    height: 200px !important; ;  
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid #000000;
     margin-left: 8rem;
+  }
+/* Avatar que contiene las iniciales */
+/* .w-10 {
+    width: 2.5rem;
+    height: 2.5rem;
+} */
+.user-avatar-container-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; 
 }
 
 .user-info {
