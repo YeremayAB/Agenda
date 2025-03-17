@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
-// URL base del backend
-const API_BASE_URL = 'http://localhost:3000/api/auth';
+// URL base del backend para autenticación y gestión de usuarios.
+const API_BASE_URL = "http://localhost:3000/api/auth";
 
 /**
  * Estructura del usuario según la API.
@@ -39,15 +39,15 @@ export const getUsers = async (): Promise<{ users: User[] }> => {
     const token = localStorage.getItem('token');
     console.log('🔑 Token almacenado:', token); // 🛠 Debug
 
-    if (!token) throw new Error('No se encontró el token de autenticación');
+    if (!token) throw new Error("No se encontró el token de autenticación");
 
     // 🔹 Llamada a la API para obtener los usuarios
     const response = await axios.get<{ users: User[] }>(
       `${API_BASE_URL}/users/`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Token necesario para autenticarse en la API
+          "Content-Type": "application/json",
         },
       }
     );
@@ -55,7 +55,7 @@ export const getUsers = async (): Promise<{ users: User[] }> => {
     console.log('📡 Respuesta de la API:', response.data); // 🛠 Debug
     return response.data;
   } catch (error) {
-    console.error('❌ Error obteniendo usuarios:', error);
+    console.error("❌ Error obteniendo usuarios:", error);
     throw error;
   }
 };
