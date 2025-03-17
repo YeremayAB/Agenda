@@ -91,3 +91,69 @@ body {
   margin-top: 25px;
   margin-bottom: 20px;
 }
+
+/* Ajuste para que no afecte al desplegable del selector de filas */
+.p-paginator .p-dropdown {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Estilo solo para las opciones del paginador, no para las opciones del dropdown */
+.p-paginator .p-dropdown-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.p-paginator .p-dropdown-item:hover {
+  background-color: #5b7d83;
+  color: white;
+}
+
+.p-paginator .p-dropdown-item:active {
+  background-color: #4a6c70;
+}
+
+.p-paginator .p-dropdown-item:disabled {
+  background-color: #f2f2f2;
+  color: #b3b3b3;
+  cursor: not-allowed;
+}
+
+.p-paginator .p-dropdown-item p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Ajustes específicos para los números del paginador */
+.p-paginator .p-dropdown-label {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.p-paginator .p-dropdown-label:hover {
+  background-color: #5b7d83;
+  color: white;
+}
+
+/* No se aplican estilos a los números dentro del selector de filas */
+.p-paginator .p-dropdown-panel {
+  padding: 0; /* Sin padding extra */
+  border-radius: 6px;
+  background-color: #fff;
+}

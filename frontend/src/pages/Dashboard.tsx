@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { InputText } from 'primereact/inputtext';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Paginator } from 'primereact/paginator';
-import '../assets/styles/Dashboard.css';
-import Header2 from '../components/Header/Header2';
-import { getUsers, User } from '../components/Login/services/UsersService';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { InputText } from "primereact/inputtext";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Paginator } from "primereact/paginator";
+import "../assets/styles/Dashboard.css";
+import Header2 from "../components/Header/Header2";
+import { getUsers, User } from "../components/Login/services/UsersService";
+import axios from "axios";
 
 const Dashboard: React.FC = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +20,7 @@ const Dashboard: React.FC = () => {
     {}
   );
   const navigate = useNavigate();
+  const containsNumbers = (str: string) => /\d/.test(str);
 
   // Obtener usuarios del servicio
   useEffect(() => {
@@ -27,17 +28,17 @@ const Dashboard: React.FC = () => {
       try {
         setLoading(true);
         const response = await getUsers();
-        console.log('Usuarios recibidos:', response);
+        console.log("Usuarios recibidos:", response);
 
         if (!response || !response.users) {
-          throw new Error('Error: La API no devolvió usuarios válidos.');
+          throw new Error("Error: La API no devolvió usuarios válidos.");
         }
 
         setUsers(response.users);
         fetchProfilePictures(response.users);
       } catch (err) {
-        console.error('❌ Error cargando usuarios:', err);
-        setError('Error cargando usuarios');
+        console.error("❌ Error cargando usuarios:", err);
+        setError("Error cargando usuarios");
       } finally {
         setLoading(false);
       }
@@ -48,9 +49,9 @@ const Dashboard: React.FC = () => {
 
   // Obtener imágenes desde Microsoft Graph si no están en la API local
   const fetchProfilePictures = async (users: User[]) => {
-    const graphToken = localStorage.getItem('ms_token');
+    const graphToken = localStorage.getItem("ms_token");
     if (!graphToken) {
-      console.warn('⚠️ No se encontró el token de Microsoft Graph.');
+      console.warn("⚠️ No se encontró el token de Microsoft Graph.");
       return;
     }
 
@@ -68,9 +69,9 @@ const Dashboard: React.FC = () => {
               {
                 headers: {
                   Authorization: `Bearer ${graphToken}`,
-                  'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                 },
-                responseType: 'blob',
+                responseType: "blob",
               }
             );
 
@@ -117,8 +118,8 @@ const Dashboard: React.FC = () => {
       return (
         <img
           src={profileImage}
-          alt='Profile'
-          className='w-10 h-10 rounded-full object-cover'
+          alt="Profile"
+          className="w-10 h-10 rounded-full object-cover"
           onLoad={(e) =>
             console.log(`✅ Imagen cargada correctamente: ${profileImage}`)
           }
@@ -126,19 +127,19 @@ const Dashboard: React.FC = () => {
             console.warn(
               `⚠️ Error al cargar imagen para ${rowData.displayName}`
             );
-            e.currentTarget.src = ''; // Forzar a que muestre iniciales si hay error
+            e.currentTarget.src = ""; // Forzar a que muestre iniciales si hay error
           }}
         />
       );
     } else {
-      const name = rowData.displayName || 'N/A';
+      const name = rowData.displayName || "N/A";
       const initials = name
-        .split(' ')
+        .split(" ")
         .map((word) => word.charAt(0))
-        .join('');
+        .join("");
 
       return (
-        <div className='w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl'>
+        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl">
           {initials}
         </div>
       );
@@ -162,25 +163,25 @@ const Dashboard: React.FC = () => {
     <div>
       <Header2 />
 
-      <div className='p-8 bg-gray-100 min-h-screen'>
+      <div className="p-8 bg-gray-100 min-h-screen">
         {/* Barra de búsqueda */}
-        <div className='flex justify-center mt-12'>
-          <div className='relative w-1/2'>
-            <i className='pi pi-search text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2 font-karma' />
+        <div className="flex justify-center mt-12 mb-8">
+          <div className="relative w-1/2">
+            <i className="pi pi-search text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2 font-karma" />
             <InputText
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder='Buscar...'
-              className='p-inputtext-lg w-full shadow-md rounded-full pl-12 py-3'
+              placeholder="Buscar..."
+              className="p-inputtext-lg w-full shadow-md rounded-full pl-12 py-3"
             />
           </div>
         </div>
 
         {/* Contenedor principal */}
-        <div className='flex items-center justify-center min-h-[70vh]'>
-          <div className='bg-white p-6 shadow-lg rounded-xl w-full max-w-[1500px] h-full min-h-[60vh]'>
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="bg-white p-6 shadow-lg rounded-xl w-full max-w-[1500px] h-full min-h-[60vh]">
             {/* Contenedor de la tarjeta */}
-            <div className='card-content'>
+            <div className="card-content">
               {loading ? (
                 <p>Cargando usuarios...</p>
               ) : error ? (
@@ -188,51 +189,65 @@ const Dashboard: React.FC = () => {
               ) : users.length > 0 ? (
                 <DataTable
                   value={filteredData.slice(first, first + rows)}
-                  className='data-table border border-gray-200 rounded-lg border-collapse mb-6'
+                  className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
                 >
                   {/* Columna de Foto de Perfil */}
                   <Column
-                    header='Foto'
+                    header="Foto"
                     body={renderProfilePicture}
-                    headerClassName='bg-[#5B7D83] text-white border border-gray-200 p-3'
-                    bodyClassName='border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200'
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3 flex justify-center items-center"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200 flex justify-center items-center"
                   />
 
                   {/* Nombre Completo */}
                   <Column
-                    field='displayName'
-                    header='Nombre'
-                    headerClassName='bg-[#5B7D83] text-white border border-gray-200 p-3'
-                    bodyClassName='border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200'
+                    field="displayName"
+                    header="Nombre"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
                     body={(rowData) => (
                       <span onClick={() => handleCellClick(rowData)}>
-                        {rowData.displayName || 'No disponible'}
+                        {rowData.displayName || "No disponible"}
                       </span>
                     )}
                   />
 
                   {/* Correo Electrónico */}
                   <Column
-                    field='mail'
-                    header='Correo'
-                    headerClassName='bg-[#5B7D83] text-white border border-gray-200 p-3'
-                    bodyClassName='border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200'
+                    field="mail"
+                    header="Correo"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
                     body={(rowData) => (
                       <span onClick={() => handleCellClick(rowData)}>
-                        {rowData.mail || 'No disponible'}
+                        {rowData.mail || "No disponible"}
                       </span>
                     )}
                   />
 
                   {/* Nombre de Usuario */}
                   <Column
-                    field='userPrincipalName'
-                    header='Usuario'
-                    headerClassName='bg-[#5B7D83] text-white border border-gray-200 p-3'
-                    bodyClassName='border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200'
+                    field="userPrincipalName"
+                    header="Usuario"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
+                    body={(rowData) => {
+                      const userPrincipalName =
+                        rowData.userPrincipalName || "No disponible";
+                      return containsNumbers(userPrincipalName)
+                        ? ""
+                        : userPrincipalName;
+                    }}
+                  />
+
+                  <Column
+                    field="userPrincipalName"
+                    header="Número de teléfono"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
                     body={(rowData) => (
                       <span onClick={() => handleCellClick(rowData)}>
-                        {rowData.userPrincipalName || 'No disponible'}
+                        {rowData.phone || "No disponible"}
                       </span>
                     )}
                   />
@@ -242,7 +257,7 @@ const Dashboard: React.FC = () => {
               )}
 
               {/* Paginador */}
-              <div className='paginator-container flex justify-center mt-4 mb-6'>
+              <div className="paginator-container flex justify-center mt-4 mb-6">
                 <Paginator
                   first={first}
                   rows={rows}
@@ -252,7 +267,7 @@ const Dashboard: React.FC = () => {
                     setFirst(e.first);
                     setRows(e.rows);
                   }}
-                  className='rounded-lg border border-gray-300 shadow-sm p-2 bg-white'
+                  className="rounded-lg border border-gray-300 shadow-sm p-2 bg-white"
                 />
               </div>
             </div>
