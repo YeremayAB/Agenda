@@ -89,7 +89,7 @@ const UserProfile: React.FC = () => {
       const name = user?.full_name || '';
       const initials = name
         .split(' ')
-        .map((word) => word.charAt(0))
+        .map((word: string) => word.charAt(0))
         .join('');
 
       return (
