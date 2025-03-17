@@ -7,7 +7,7 @@ const Header = () => {
     <header className="header">
       <div className="header-content">
         <div className="header-logo">
-          <img src="GrumasaLogo3.png" alt="Livvo Logo" className="logo-image" />
+          <img src="GrumasaLogoDef.png" alt="Livvo Logo" className="logo-image" />
         </div>
       </div>
     </header>
