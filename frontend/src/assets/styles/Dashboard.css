@@ -92,27 +92,49 @@ body {
   margin-bottom: 20px;
 }
 
-/* Ajuste para que no afecte al desplegable del selector de filas */
+/* Asegura que el dropdown tenga un diseño adecuado */
 .p-paginator .p-dropdown {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
+  position: relative; /* Asegura que el dropdown esté bien posicionado */
 }
 
-/* Estilo solo para las opciones del paginador, no para las opciones del dropdown */
-.p-paginator .p-dropdown-item {
-  padding: 8px 12px;
-  border-radius: 6px;
-  background-color: #fff;
+/* Contenedor del menú desplegable */
+.p-paginator .p-dropdown-panel {
+  position: absolute !important;
+  top: 100%; /* Lo coloca justo debajo del botón */
+  left: 0;
+  z-index: 1050 !important; /* Asegura que se muestre sobre otros elementos */
+  background-color: white;
   border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 5px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 120px; /* Asegura que las opciones sean visibles */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo de las opciones dentro del dropdown */
+.p-paginator .p-dropdown-item {
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: white;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
+/* Última opción sin borde */
+.p-paginator .p-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Hover y selección */
 .p-paginator .p-dropdown-item:hover {
   background-color: #5b7d83;
   color: white;
@@ -122,38 +144,38 @@ body {
   background-color: #4a6c70;
 }
 
+/* Estado deshabilitado */
 .p-paginator .p-dropdown-item:disabled {
   background-color: #f2f2f2;
   color: #b3b3b3;
   cursor: not-allowed;
 }
 
-.p-paginator .p-dropdown-item p {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-/* Ajustes específicos para los números del paginador */
+/* Botón desplegable */
 .p-paginator .p-dropdown-label {
-  padding: 8px 12px;
+  padding: 10px 15px;
   border-radius: 6px;
-  background-color: #fff;
+  background-color: white;
   border: 1px solid #ddd;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
   transition: background-color 0.3s, color 0.3s;
+  text-align: center;
 }
 
+/* Hover en el botón desplegable */
 .p-paginator .p-dropdown-label:hover {
   background-color: #5b7d83;
   color: white;
 }
 
-/* No se aplican estilos a los números dentro del selector de filas */
-.p-paginator .p-dropdown-panel {
-  padding: 0; /* Sin padding extra */
-  border-radius: 6px;
-  background-color: #fff;
+.p-avatar .p-avatar-text {
+  display: flex;
+  align-items: center;  /* Centra verticalmente el texto */
+  justify-content: center;  /* Centra horizontalmente el texto */
+  width: 100%;
+  height: 100%;
+  font-size: 1.2rem; /* Ajusta el tamaño de las letras si es necesario */
+  margin-top: 8px;
 }
