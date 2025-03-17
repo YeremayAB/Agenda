@@ -4,6 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
+import { Dropdown } from "primereact/dropdown";
 import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
 import { getUsers, User } from "../components/Login/services/UsersService";
@@ -256,19 +257,36 @@ const Dashboard: React.FC = () => {
                 <p>No hay usuarios disponibles.</p>
               )}
 
-              {/* Paginador */}
-              <div className="paginator-container flex justify-center mt-4 mb-6">
+              {/* Paginador con Selector de Tamaño */}
+              <div className="paginator-container flex items-center justify-between mt-4 mb-6">
+                {/* Paginador */}
                 <Paginator
                   first={first}
                   rows={rows}
                   totalRecords={filteredData.length}
-                  rowsPerPageOptions={[5, 10, 25]}
                   onPageChange={(e) => {
                     setFirst(e.first);
                     setRows(e.rows);
                   }}
                   className="rounded-lg border border-gray-300 shadow-sm p-2 bg-white"
                 />
+
+                {/* Selector de Tamaño */}
+                <div className="flex items-center">
+                  <label htmlFor="table-size" className="mr-2 font-semibold">
+                  </label>
+                  <select
+                    id="table-size"
+                    value={rows}
+                    onChange={(e) => setRows(Number(e.target.value))}
+                    className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm bg-white text-gray-700 focus:ring focus:ring-blue-300"
+                  >
+                    <option value={5}>5 </option>
+                    <option value={10}>10 </option>
+                    <option value={25}>25 </option>
+                    <option value={50}>50 </option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>

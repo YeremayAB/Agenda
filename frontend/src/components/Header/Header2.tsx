@@ -82,6 +82,7 @@ const Header2: React.FC = () => {
         .split(' ')
         .map((word: string) => word.charAt(0))
         .join('');
+        
 
       return (
         <Avatar
@@ -116,7 +117,7 @@ const Header2: React.FC = () => {
 
         {/* Sección central: Logo */}
         <div className="header-logo">
-          <img src="GrumasaLogoDef.png" alt="Livvo Logo" className="logo-image" />
+          <img src="GrumasaLogoDef.png" alt="Grumasa Logo" className="logo-image" />
         </div>
 
         <div className="header-user">
