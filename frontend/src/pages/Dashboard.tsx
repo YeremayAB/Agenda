@@ -4,18 +4,15 @@ import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
-// import { Dropdown } from "primereact/dropdown";
 import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
 import { getUsers, User } from "../components/Login/services/UsersService";
 import axios from "axios";
-import { Button } from "primereact/button";
 
 /**
  * Componente principal del panel de administración (Dashboard).
- * Muestra una lista de usuarios de búqueda y paginación.
+ * Muestra una lista de usuarios de búsqueda y paginación.
  */
-
 const Dashboard: React.FC = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -26,9 +23,10 @@ const Dashboard: React.FC = () => {
   const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
     {}
   );
+  const [favorites, setFavorites] = useState<string[]>([]); // Estado para rastrear usuarios favoritos
 
   /**
-   * Verifica si un string contienen números
+   * Verifica si un string contiene números
    */
   const navigate = useNavigate();
   const containsNumbers = (str: string) => /\d/.test(str);
@@ -45,21 +43,17 @@ const Dashboard: React.FC = () => {
         setLoading(true);
         const response = await getUsers();
         console.log("Usuarios recibidos:", response);
-
         if (!response || !response.users) {
           throw new Error("Error: La API no devolvió usuarios válidos.");
         }
-
         // Filtrar usuarios con números en su 'userPrincipalName'
         const filteredUsers: User[] = response.users.filter(
           (user) => !containsNumbers(user.userPrincipalName || "")
         );
-
         // Ordenar usuarios alfabéticamente por `displayName`
         const sortedUsers = filteredUsers.sort((a, b) =>
           (a.displayName || "").localeCompare(b.displayName || "")
         );
-
         setUsers(sortedUsers);
         fetchProfilePictures(sortedUsers);
       } catch (err) {
@@ -69,7 +63,6 @@ const Dashboard: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchUsers();
   }, []);
 
@@ -83,16 +76,13 @@ const Dashboard: React.FC = () => {
       console.warn("⚠️ No se encontró el token de Microsoft Graph.");
       return;
     }
-
     const images: { [key: string]: string } = {};
-
     await Promise.all(
       users.map(async (user) => {
         if (!user.profile_image) {
           // Si no tiene imagen en la API, buscar en Microsoft Graph
           try {
             console.log(`🔍 Buscando foto de: ${user.userPrincipalName}...`);
-
             const response = await axios.get(
               `https://graph.microsoft.com/v1.0/users/${user.userPrincipalName}/photo/$value`,
               {
@@ -103,7 +93,6 @@ const Dashboard: React.FC = () => {
                 responseType: "blob",
               }
             );
-
             if (response.status === 200) {
               const imageUrl = URL.createObjectURL(response.data);
               images[user.id] = imageUrl;
@@ -127,7 +116,6 @@ const Dashboard: React.FC = () => {
         }
       })
     );
-
     setProfileImages((prevImages) => ({ ...prevImages, ...images }));
   };
 
@@ -138,12 +126,10 @@ const Dashboard: React.FC = () => {
    */
   const renderProfilePicture = (rowData: User) => {
     const profileImage = rowData.profile_image || profileImages[rowData.id];
-
     if (profileImage) {
       console.log(
         `📸 Mostrando imagen para ${rowData.displayName}: ${profileImage}`
       );
-
       return (
         <img
           src={profileImage}
@@ -166,7 +152,6 @@ const Dashboard: React.FC = () => {
         .split(" ")
         .map((word) => word.charAt(0))
         .join("");
-
       return (
         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl">
           {initials}
@@ -183,6 +168,18 @@ const Dashboard: React.FC = () => {
     navigate(`/user_profile/${rowData.id}`, { state: { userData: rowData } });
   };
 
+  /**
+   * Alterna el estado de un usuario como favorito.
+   * @param {string} userId - ID del usuario a alternar como favorito.
+   */
+  const toggleFavorite = (userId: string) => {
+    if (favorites.includes(userId)) {
+      setFavorites((prev) => prev.filter((id) => id !== userId)); // Elimina el usuario de favoritos
+    } else {
+      setFavorites((prev) => [...prev, userId]); // Agrega el usuario a favoritos
+    }
+  };
+
   // Filtrar usuarios según búsqueda
   const filteredData = users.filter((user) =>
     Object.values(user || {}).some(
@@ -191,12 +188,9 @@ const Dashboard: React.FC = () => {
     )
   );
 
-  const [selectedButton, setSelectedButton] = useState("Todos");
-
   return (
     <div>
       <Header2 />
-
       <div className="p-8 bg-gray-100 min-h-screen">
         {/* Barra de búsqueda */}
         <div className="flex justify-center mt-12 mb-8">
@@ -209,20 +203,7 @@ const Dashboard: React.FC = () => {
               className="p-inputtext-lg w-full shadow-md rounded-full pl-12 py-3"
             />
           </div>
-          <div className="buttons-container">
-          <Button
-          label="Todos"
-          className={`p-button-btn-all btn-all ${selectedButton === "Todos" ? "selected" : ""}`}
-          onClick={() => setSelectedButton("Todos")}
-        />
-        <Button
-          label="Favoritos"
-          className={`p-button-btn-favorites btn-favorites ${selectedButton === "Favoritos" ? "selected" : ""}`}
-          onClick={() => setSelectedButton("Favoritos")}
-        />
-          </div>
         </div>
-
         {/* Contenedor principal */}
         <div className="flex items-center justify-center min-h-[70vh]">
           <div className="bg-white p-6 shadow-lg rounded-xl w-full max-w-[1500px] h-full min-h-[60vh]">
@@ -235,15 +216,23 @@ const Dashboard: React.FC = () => {
               ) : users.length > 0 ? (
                 <DataTable
                   value={filteredData.slice(first, first + rows)}
-                  className="data-table  rounded-lg border-collapse mb-6"
+                  className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
                 >
-                   <Column
+                  {/* Ícono de estrella */}
+                  <Column
                     body={(rowData) => (
-                      <div className="flex items-center justify-center m-2">
-                        <i className="pi pi-star text-yellow-500 cursor-pointer"></i>
+                      <div className="flex items-center justify-start ml-4">
+                        <i
+                          className={`pi ${
+                            favorites.includes(rowData.id)
+                              ? "pi-star-fill" // Estrella rellena si es favorito
+                              : "pi-star" // Estrella vacía si no es favorito
+                          } text-yellow-500 cursor-pointer pr-3`}
+                          onClick={() => toggleFavorite(rowData.id)} // Alternar estado de favorito
+                        ></i>
                       </div>
                     )}
-                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3 justify-center items-center"
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
                     bodyClassName="border border-gray-200 p-3 h-full"
                   />
                   {/* Columna de Foto de Perfil */}
@@ -253,7 +242,6 @@ const Dashboard: React.FC = () => {
                     headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3 justify-center items-center"
                     bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200 flex justify-center items-center"
                   />
-
                   {/* Nombre Completo */}
                   <Column
                     field="displayName"
@@ -266,7 +254,6 @@ const Dashboard: React.FC = () => {
                       </span>
                     )}
                   />
-
                   {/* Correo Electrónico */}
                   <Column
                     field="mail"
@@ -279,7 +266,6 @@ const Dashboard: React.FC = () => {
                       </span>
                     )}
                   />
-
                   {/* Nombre de Usuario */}
                   <Column
                     field="userPrincipalName"
@@ -294,7 +280,6 @@ const Dashboard: React.FC = () => {
                         : userPrincipalName;
                     }}
                   />
-
                   <Column
                     field="phone"
                     header="Número de teléfono"
