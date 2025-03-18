@@ -237,6 +237,15 @@ const Dashboard: React.FC = () => {
                   value={filteredData.slice(first, first + rows)}
                   className="data-table border border-gray-200 rounded-lg border-collapse mb-6"
                 >
+                   <Column
+                    body={(rowData) => (
+                      <div className="flex items-center justify-start ml-4">
+                        <i className="pi pi-star text-yellow-500 cursor-pointer"></i>
+                      </div>
+                    )}
+                    headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
+                    bodyClassName="border border-gray-200 p-3 h-full"
+                  />
                   {/* Columna de Foto de Perfil */}
                   <Column
                     header="Foto"

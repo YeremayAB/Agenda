@@ -62,3 +62,25 @@ class SyncLog(models.Model):
     def __str__(self):
         """Retorna una representación en string del log de sincronización."""
         return f"Sincronización {self.timestamp}"
+
+    
+class FavoriteUser(models.Model):
+    """
+    Modelo que representa la relación de usuarios favoritos.
+
+    Atributos:
+        user_id (str): ID único del usuario que marca como favorito (UUID de Azure).
+        favorite_id (str): ID único del usuario marcado como favorito (UUID de Azure).
+        created_at (datetime): Fecha y hora en que se marcó como favorito.
+    """
+
+    user_id = models.CharField(max_length=36)  # UUID de Azure
+    favorite_id = models.CharField(max_length=36)  # UUID de Azure
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user_id', 'favorite_id')  # Evita duplicados
+
+    def __str__(self):
+        """Retorna una representación en string de la relación."""
+        return f"User ID: {self.user_id} -> Favorite ID: {self.favorite_id}"
