@@ -8,6 +8,7 @@ import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
 import { getUsers, User } from "../components/Login/services/UsersService";
 import axios from "axios";
+import { Button } from "primereact/button";
 
 /**
  * Componente principal del panel de administración (Dashboard).
@@ -20,7 +21,9 @@ const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>({});
+  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
+    {}
+  );
   const [favorites, setFavorites] = useState<string[]>([]); // Estado para los usuarios favoritos
   const [selectedButton, setSelectedButton] = useState("Todos");
 
@@ -86,11 +89,18 @@ const Dashboard: React.FC = () => {
             }
           } catch (error: any) {
             if (error.response?.status === 403) {
-              console.warn(`🚫 No tienes permisos para ver la foto de ${user.displayName}.`);
+              console.warn(
+                `🚫 No tienes permisos para ver la foto de ${user.displayName}.`
+              );
             } else if (error.response?.status === 404) {
-              console.warn(`⚠️ No hay foto de perfil para ${user.displayName}.`);
+              console.warn(
+                `⚠️ No hay foto de perfil para ${user.displayName}.`
+              );
             } else {
-              console.error(`❌ Error al obtener la imagen para ${user.displayName}:`, error);
+              console.error(
+                `❌ Error al obtener la imagen para ${user.displayName}:`,
+                error
+              );
             }
           }
         }
@@ -102,22 +112,31 @@ const Dashboard: React.FC = () => {
   const renderProfilePicture = (rowData: User) => {
     const profileImage = rowData.profile_image || profileImages[rowData.id];
     if (profileImage) {
-      console.log(`📸 Mostrando imagen para ${rowData.displayName}: ${profileImage}`);
+      console.log(
+        `📸 Mostrando imagen para ${rowData.displayName}: ${profileImage}`
+      );
       return (
         <img
           src={profileImage}
           alt="Profile"
           className="w-10 h-10 rounded-full object-cover"
-          onLoad={(e) => console.log(`✅ Imagen cargada correctamente: ${profileImage}`)}
+          onLoad={(e) =>
+            console.log(`✅ Imagen cargada correctamente: ${profileImage}`)
+          }
           onError={(e) => {
-            console.warn(`⚠️ Error al cargar imagen para ${rowData.displayName}`);
+            console.warn(
+              `⚠️ Error al cargar imagen para ${rowData.displayName}`
+            );
             e.currentTarget.src = ""; // Forzar a que muestre iniciales si hay error
           }}
         />
       );
     } else {
       const name = rowData.displayName || "N/A";
-      const initials = name.split(" ").map((word) => word.charAt(0)).join("");
+      const initials = name
+        .split(" ")
+        .map((word) => word.charAt(0))
+        .join("");
       return (
         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl">
           {initials}
@@ -130,22 +149,11 @@ const Dashboard: React.FC = () => {
     navigate(`/user_profile/${rowData.id}`, { state: { userData: rowData } });
   };
 
-  /**
-   * Alterna el estado de un usuario como favorito.
-   * @param {string} userId - ID del usuario a alternar como favorito.
-   */
-  const toggleFavorite = (userId: string) => {
-    if (favorites.includes(userId)) {
-      setFavorites((prev) => prev.filter((id) => id !== userId)); // Elimina el usuario de favoritos
-    } else {
-      setFavorites((prev) => [...prev, userId]); // Agrega el usuario a favoritos
-    }
-  };
-
   // Filtrar usuarios según búsqueda
   const filteredData = users.filter((user) =>
     Object.values(user || {}).some(
-      (val) => val && val.toString().toLowerCase().includes(search.toLowerCase())
+      (val) =>
+        val && val.toString().toLowerCase().includes(search.toLowerCase())
     )
   );
 
@@ -160,13 +168,15 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const storedFavorites = JSON.parse(
+      localStorage.getItem("favorites") || "[]"
+    );
     setFavorites(storedFavorites);
   }, []);
 
   useEffect(() => {
     if (favorites.length > 0) {
-      localStorage.setItem('favorites', JSON.stringify(favorites));
+      localStorage.setItem("favorites", JSON.stringify(favorites));
     }
   }, [favorites]);
 
@@ -193,12 +203,16 @@ const Dashboard: React.FC = () => {
           <div className="buttons-container">
             <Button
               label="Todos"
-              className={`p-button-btn-all btn-all ${selectedButton === "Todos" ? "selected" : ""}`}
+              className={`p-button-btn-all btn-all ${
+                selectedButton === "Todos" ? "selected" : ""
+              }`}
               onClick={() => setSelectedButton("Todos")}
             />
             <Button
               label="Favoritos"
-              className={`p-button-btn-favorites btn-favorites ${selectedButton === "Favoritos" ? "selected" : ""}`}
+              className={`p-button-btn-favorites btn-favorites ${
+                selectedButton === "Favoritos" ? "selected" : ""
+              }`}
               onClick={() => setSelectedButton("Favoritos")}
             />
           </div>
@@ -220,8 +234,22 @@ const Dashboard: React.FC = () => {
                     body={(rowData) => (
                       <div className="flex items-center justify-center m-2">
                         <i
-                          className={`pi pi-star ${favorites.includes(rowData.id) ? 'text-yellow-500' : 'text-gray-400'} cursor-pointer`}
-                          onClick={() => toggleFavorite(rowData.id)}
+                          className={`pi pi-star ${
+                            favorites.includes(rowData.id)
+                              ? "text-yellow-500"
+                              : "text-gray-400"
+                          } cursor-pointer`}
+                          onClick={() =>
+                            ((userId: string) => {
+                              if (favorites.includes(userId)) {
+                                setFavorites((prev) =>
+                                  prev.filter((id) => id !== userId)
+                                ); // Elimina el usuario de favoritos
+                              } else {
+                                setFavorites((prev) => [...prev, userId]); // Agrega el usuario a favoritos
+                              }
+                            })(rowData.id)
+                          }
                         ></i>
                       </div>
                     )}
@@ -262,8 +290,30 @@ const Dashboard: React.FC = () => {
                     headerClassName="bg-[#5B7D83] text-white border border-gray-200 p-3"
                     bodyClassName="border border-gray-200 p-3 h-full cursor-pointer hover:bg-gray-200"
                     body={(rowData) => {
-                      const userPrincipalName = rowData.userPrincipalName || "No disponible";
-                      return containsNumbers(userPrincipalName) ? "" : userPrincipalName;
+                      const userPrincipalName =
+                        rowData.userPrincipalName || "No disponible";
+
+                      // Si contiene números, no mostrar nada (lógica existente)
+                      if (containsNumbers(userPrincipalName)) {
+                        return "";
+                      }
+
+                      // Dividir el nombre de usuario en dos partes: antes y después del '@'
+                      const [localPart, domainPart] =
+                        userPrincipalName.split("@");
+
+                      // Si la parte antes del '@' tiene más de 35 caracteres, agregar un salto de línea
+                      if (localPart.length > 35) {
+                        return (
+                          <span>
+                            {localPart}
+                            <br />@{domainPart}
+                          </span>
+                        );
+                      }
+
+                      // Si no supera los 35 caracteres, mostrar el nombre de usuario completo
+                      return <span>{userPrincipalName}</span>;
                     }}
                   />
                   <Column
@@ -294,7 +344,10 @@ const Dashboard: React.FC = () => {
                   className="rounded-lg border border-gray-300 shadow-sm p-2 bg-white"
                 />
                 <div className="flex items-center">
-                  <label htmlFor="table-size" className="mr-2 font-semibold"></label>
+                  <label
+                    htmlFor="table-size"
+                    className="mr-2 font-semibold"
+                  ></label>
                   <select
                     id="table-size"
                     value={rows}
