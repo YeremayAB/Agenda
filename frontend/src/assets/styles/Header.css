@@ -53,8 +53,8 @@ body {
 }
 
 .user-avatar-header {
-    width: 2.5rem;  
-    height: 2.5rem;  
+    width: 2.7rem;  
+    height: 2.7rem;  
     background-color: #e5e7eb;
     color: #ffffff;
     display: flex;
@@ -63,6 +63,7 @@ body {
     border-radius: 50%;
     font-size: 1.25rem;
     font-weight: 600;
+    border: 2px solid #000000;
   }
   
 .user-avatar-header:hover {

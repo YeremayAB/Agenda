@@ -8,6 +8,7 @@ const API_BASE_URL = "http://localhost:3000/api/auth";
  * Define los datos principales que se obtienen desde el backend.
  */
 export interface User {
+  isFavorite: unknown;
   id: string;
   displayName: string;
   mail?: string | null;

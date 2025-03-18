@@ -9,6 +9,7 @@ import "../assets/styles/Dashboard.css";
 import Header2 from "../components/Header/Header2";
 import { getUsers, User } from "../components/Login/services/UsersService";
 import axios from "axios";
+import { Button } from "primereact/button";
 
 /**
  * Componente principal del panel de administración (Dashboard).
@@ -35,7 +36,7 @@ const Dashboard: React.FC = () => {
   /**
    * Obtiene los usuarios desde el servicio 'getUsers()', filtra duplicados, y no muestra los usuarios
    * con números en su nombre de usuario.
-   * 
+   *
    * Se ejecuta en 'useEffect()' al montar el componente
    */
   useEffect(() => {
@@ -190,6 +191,8 @@ const Dashboard: React.FC = () => {
     )
   );
 
+  const [selectedButton, setSelectedButton] = useState("Todos");
+
   return (
     <div>
       <Header2 />
@@ -205,6 +208,18 @@ const Dashboard: React.FC = () => {
               placeholder="Buscar..."
               className="p-inputtext-lg w-full shadow-md rounded-full pl-12 py-3"
             />
+          </div>
+          <div className="buttons-container">
+          <Button
+          label="Todos"
+          className={`p-button-btn-all btn-all ${selectedButton === "Todos" ? "selected" : ""}`}
+          onClick={() => setSelectedButton("Todos")}
+        />
+        <Button
+          label="Favoritos"
+          className={`p-button-btn-favorites btn-favorites ${selectedButton === "Favoritos" ? "selected" : ""}`}
+          onClick={() => setSelectedButton("Favoritos")}
+        />
           </div>
         </div>
 

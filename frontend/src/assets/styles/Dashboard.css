@@ -179,3 +179,52 @@ body {
   font-size: 1.2rem; /* Ajusta el tamaño de las letras si es necesario */
   margin-top: 8px;
 }
+.buttons-container {
+  display: flex;
+  gap: 2rem;
+  margin-left: 4rem;
+}
+
+.p-button-btn-all {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold; /* Letras en negrita */
+  color: white !important; /* Letras blancas */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-all {
+  background-color: #5b7d83 !important;
+  border: 2px solid #000000;
+}
+
+.btn-all:hover {
+  background-color: #324b50 !important;
+}
+
+.p-button-btn-favorites {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold; /* Letras en negrita */
+  color: white !important; /* Letras blancas */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-favorites {
+  background-color: #5b7d83 !important;
+  border: 2px solid #000000;
+}
+
+.btn-favorites:hover {
+  background-color: #324b50 !important;
+}
+
+/* Estilo para el botón seleccionado */
+.selected {
+  background-color: #324b50 !important; /* Color más oscuro */
+  transform: scale(1.05);
+}
