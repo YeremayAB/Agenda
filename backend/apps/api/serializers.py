@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, FavoriteUser
 
 def get_access_token():
     app = msal.ConfidentialClientApplication(
@@ -26,5 +26,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip()
+
+class FavoriteUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteUser
+        fields = ['user_id', 'favorite_id', 'created_at']
+        read_only_fields = ['created_at']
 
         

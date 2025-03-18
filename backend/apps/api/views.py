@@ -3,6 +3,7 @@ import requests
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer
@@ -196,3 +197,40 @@ def logout(request):
 
     except Exception as e:
         return Response({'error': f'Error al cerrar sesión: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class FavoriteUserView(APIView):
+    """
+    API para gestionar los favoritos de los usuarios.
+    """
+
+    def get(self, request, user_id):
+        """Obtiene la lista de usuarios favoritos de un usuario."""
+        favorites = FavoriteUser.objects.filter(user_id = user_id)
+        serializer = FavoriteUserSerializer(favorites, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        """Agrega un usuario a favoritos."""
+        serializer = FavoriteUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        """Elimina un usuario de la lista de favoritos."""
+        user_id = request.data.get("user_id")
+        favorite_id = request.data.get("favorite_id")
+
+        if not user_id or not favorite_id:
+            return Response(
+                {"error": "user_id y favorite_id son requeridos"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            favorite = FavoriteUser.objects.get(user_id=user_id, favorite_id=favorite_id)
+            favorite.delete()
+            return Response({"message": "Favorito eliminado"}, status=status.HTTP_204_NO_CONTENT)
+        except FavoriteUser.DoesNotExist:
+            return Response({"error": "Favorito no encontrado"}, status=status.HTTP_404_NOT_FOUND)
