@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 class User(models.Model):
     """
@@ -84,3 +85,15 @@ class FavoriteUser(models.Model):
     def __str__(self):
         """Retorna una representación en string de la relación."""
         return f"User ID: {self.user_id} -> Favorite ID: {self.favorite_id}"
+
+class FavoriteUser(models.Model):
+    user_id = models.UUIDField(default=uuid.uuid4, editable=False)  # UUID de Azure
+    favorite_id = models.UUIDField(default=uuid.uuid4, editable=False)  # UUID de Azure
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user_id', 'favorite_id')  # Evita duplicados
+
+    def __str__(self):
+        return f"User ID: {self.user_id} -> Favorite ID: {self.favorite_id}"
+
