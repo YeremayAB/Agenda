@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer
 import environ
+from .models import FavoriteUser
+from .serializers import FavoriteUserSerializer
 
 env = environ.Env()
 env.read_env()
@@ -204,33 +206,77 @@ class FavoriteUserView(APIView):
     """
 
     def get(self, request, user_id):
-        """Obtiene la lista de usuarios favoritos de un usuario."""
-        favorites = FavoriteUser.objects.filter(user_id = user_id)
+        """
+        Obtiene la lista de usuarios favoritos de un usuario.
+        """
+        favorites = FavoriteUser.objects.filter(user_id=user_id)
+        
+        if not favorites.exists():
+            return Response({"message": "No se encontraron favoritos para este usuario."}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = FavoriteUserSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        """Agrega un usuario a favoritos."""
-        serializer = FavoriteUserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request):
-        """Elimina un usuario de la lista de favoritos."""
+        """
+        Agrega un usuario a favoritos.
+        """
         user_id = request.data.get("user_id")
         favorite_id = request.data.get("favorite_id")
 
         if not user_id or not favorite_id:
             return Response(
-                {"error": "user_id y favorite_id son requeridos"},
+                {"error": "user_id y favorite_id son requeridos."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Evitar que un usuario se marque a sí mismo como favorito
+        if user_id == favorite_id:
+            return Response(
+                {"error": "No puedes agregar tu propio perfil como favorito."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Verificar si el favorito ya existe
+        if FavoriteUser.objects.filter(user_id=user_id, favorite_id=favorite_id).exists():
+            return Response(
+                {"message": "Este usuario ya es un favorito."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Crear el nuevo favorito
+        favorite = FavoriteUser(user_id=user_id, favorite_id=favorite_id)
+        favorite.save()
+
+        # Responder con el objeto creado
+        serializer = FavoriteUserSerializer(favorite)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        """
+        Elimina un usuario de la lista de favoritos.
+        """
+        user_id = request.data.get("user_id")
+        favorite_id = request.data.get("favorite_id")
+
+        if not user_id or not favorite_id:
+            return Response(
+                {"error": "user_id y favorite_id son requeridos."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Buscar el favorito
         try:
             favorite = FavoriteUser.objects.get(user_id=user_id, favorite_id=favorite_id)
-            favorite.delete()
-            return Response({"message": "Favorito eliminado"}, status=status.HTTP_204_NO_CONTENT)
         except FavoriteUser.DoesNotExist:
-            return Response({"error": "Favorito no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Favorito no encontrado."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Eliminar el favorito
+        favorite.delete()
+        return Response(
+            {"message": "Favorito eliminado con éxito."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
