@@ -136,3 +136,16 @@
     text-align: center;
     padding: 1rem;
 }
+
+/* Estilos para la estrella de favoritos */
+.favorite-icon {
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+  }
+  
+  .favorite-icon:hover {
+    color: #f39c12; /* Color dorado al pasar el ratón por encima */
+  }
+  

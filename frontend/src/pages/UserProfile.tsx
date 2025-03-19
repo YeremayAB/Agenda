@@ -10,18 +10,6 @@ import { getUsers, User } from '../components/Login/services/UsersService';
 import 'primeicons/primeicons.css';
 import Header2 from '../components/Header/Header2';
 
-/**
- * Componente de perfil de usuario.
- * Obtiene y muestra la información del usuario basado en su ID de la URL.
- * También intenta recuperar la imagen de perfil desde Microsoft Graph.
- *
- * **Estados:**
- * - `user` (User | null): Datos del usuario.
- * - `loading` (boolean): Indica si la información está cargando.
- * - `error` (string | null): Mensaje de error en caso de fallo.
- * - `profileImage` (string | null): URL de la imagen de perfil.
- * - `modalVisible` (boolean): Controla la visibilidad del modal de imagen.
- */
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
@@ -30,18 +18,23 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [favorites, setFavorites] = useState<string[]>([]); // Estado para los favoritos
+  const [notification, setNotification] = useState<string>(''); // Notificación de agregado/eliminado de favorito
 
-  /**
-   * Obtiene la información del usuario desde la API.
-   * 
-   * **Parámetros:**
-   * - `userId` (string): ID del usuario obtenido de la URL.
-   * 
-   * **Salida:**
-   * - Actualiza el estado `user` con la información obtenida.
-   * - Si se encuentra el usuario, llama a `fetchMicrosoftProfileImage()`.
-   * - Maneja posibles errores en la obtención de datos.
-   */
+  // Cargar favoritos desde localStorage
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setFavorites(storedFavorites);
+  }, []);
+
+  // Guardar favoritos en localStorage
+  useEffect(() => {
+    if (favorites.length > 0) {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+  }, [favorites]);
+
+  // Obtener datos del usuario
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -73,20 +66,7 @@ const UserProfile: React.FC = () => {
     }
   }, [userId]);
 
-  /**
-   * Intenta obtener la imagen de perfil del usuario desde Microsoft Graph.
-   * 
-   * **Parámetros:**
-   * - `email` (string): Correo electrónico del usuario.
-   * 
-   * **Salida:**
-   * - Si la imagen está disponible, actualiza `profileImage`.
-   * - Si hay un error, lo maneja y lo muestra en consola.
-   * 
-   * **Notas:**
-   * - Requiere un token de Microsoft Graph almacenado en `localStorage`.
-   * - Puede fallar si el usuario no tiene imagen o si no hay permisos.
-   */
+  // Obtener la imagen de perfil de Microsoft Graph
   const fetchMicrosoftProfileImage = useCallback(async (email: string) => {
     if (!email) return;
 
@@ -123,20 +103,35 @@ const UserProfile: React.FC = () => {
     }
   }, []);
 
-  /**
-   * Renderiza la imagen de perfil del usuario.
-   * 
-   * **Salida:**
-   * - Si hay imagen de perfil, la muestra en un `Avatar`.
-   * - Si no hay imagen, muestra las iniciales del usuario en un círculo.
-   */
+  // Función para manejar el clic en el botón de favorito
+  const toggleFavorite = () => {
+    setFavorites((prevFavorites) => {
+      if (userId && prevFavorites.includes(userId)) {
+        const updatedFavorites = prevFavorites.filter((id) => id !== userId);
+        localStorage.setItem('favorites', JSON.stringify(updatedFavorites)); // Guardamos en localStorage
+        setNotification("Eliminado de favoritos");
+        return updatedFavorites; // Eliminar de favoritos
+      } else if (userId) {
+        const updatedFavorites = [...prevFavorites, userId];
+        localStorage.setItem('favorites', JSON.stringify(updatedFavorites)); // Guardamos en localStorage
+        setNotification("Añadido a favoritos");
+        return updatedFavorites; // Añadir a favoritos
+      }
+      return prevFavorites;
+    });
+
+    // Mostrar notificación y ocultarla después de 2 segundos
+    setTimeout(() => setNotification(''), 2000);
+  };
+
+  // Renderizar la foto de perfil
   const renderProfilePicture = () => {
     if (profileImage) {
       return (
-        <Avatar 
-          image={profileImage} 
-          className='user-avatar-profile' 
-          shape='circle' 
+        <Avatar
+          image={profileImage}
+          className="user-avatar-profile"
+          shape="circle"
           style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }}
           onClick={() => setModalVisible(true)}
         />
@@ -144,7 +139,7 @@ const UserProfile: React.FC = () => {
     } else {
       const name = user?.displayName || 'Usuario';
       const initials = name.split(' ').map((word) => word.charAt(0)).join('');
-      return <div className='w-20 h-20 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl'>{initials}</div>;
+      return <div className="w-20 h-20 rounded-full flex items-center justify-center bg-gray-300 text-white text-xl">{initials}</div>;
     }
   };
 
@@ -155,14 +150,26 @@ const UserProfile: React.FC = () => {
 
   return (
     <div>
-      <Header2/>
-      <Button icon='pi pi-arrow-left' className='back-button' onClick={() => navigate(-1)} />
-      <div className='user-profile'>
-        <h2 className='user-title'>{user.displayName} - <strong>{user.jobTitle ? user.jobTitle.toUpperCase() : 'Posición no disponible'}</strong></h2>
-        <Card className='user-card'>
-          <div className='user-content-profile'>
-            <div className='user-avatar-container-profile'>{renderProfilePicture()}</div>
-            <div className='user-info'>
+      <Header2 />
+      <Button icon="pi pi-arrow-left" className="back-button" onClick={() => navigate(-1)} />
+      <div className="user-profile">
+        <h2 className="user-title">
+          <div className="flex items-center">
+            <span>
+              {user.displayName} - <strong>{user.jobTitle ? user.jobTitle.toUpperCase() : 'Posición no disponible'}</strong>
+            </span>
+            <Button
+              icon={`pi pi-star ${userId && favorites.includes(userId) ? 'text-yellow-500' : 'text-gray-400'}`}
+              className="favorite-button ml-4 mb-3"
+              onClick={toggleFavorite}
+              title={userId && favorites.includes(userId) ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+            />
+          </div>
+        </h2>
+        <Card className="user-card">
+          <div className="user-content-profile">
+            <div className="user-avatar-container-profile">{renderProfilePicture()}</div>
+            <div className="user-info">
               <p><strong>Email:</strong> {user.mail}</p>
               <p><strong>Teléfono:</strong> {user.businessPhones}</p>
               <p><strong>Teléfono móvil:</strong> {user.mobilePhone}</p>
@@ -173,13 +180,14 @@ const UserProfile: React.FC = () => {
           </div>
         </Card>
       </div>
-      <Dialog
-        visible={modalVisible}
-        onHide={() => setModalVisible(false)}
-        header="Foto de Perfil"
-        className="p-fluid"
-        style={{ width: '500px',  height: '525px' }}
-      >
+
+      {/* Notificación de favorito */}
+      <Dialog visible={notification !== ''} onHide={() => setNotification('')} header="Notificación" className="p-fluid" style={{ width: '300px' }}>
+        <div>{notification}</div>
+      </Dialog>
+
+      {/* Modal de Imagen de Perfil */}
+      <Dialog visible={modalVisible} onHide={() => setModalVisible(false)} header="Foto de Perfil" className="p-fluid" style={{ width: '500px', height: '525px' }}>
         {profileImage ? (
           <img
             src={profileImage}
