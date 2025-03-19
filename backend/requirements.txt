@@ -7,6 +7,7 @@ django-environ  # Manejo de variables de entorno.
 django-crontab  # Para programar tareas cron dentro de la aplicación.
 psycopg2  # Para conexiones a bases de datos PostgreSQL.
 djangorestframework-simplejwt  # Para autenticación y autorización de APIs.
+
 # Utilidades
 requests  # Para realizar solicitudes HTTP.
 Pillow  # Para trabajar con imágenes.
@@ -14,3 +15,9 @@ beautifulsoup4  # Para el análisis de HTML y scraping web.
 
 # Opcional (si se requiere integración con IA)
 openai==0.28.0  # Integración con la API de OpenAI.
+
+django-allauth
+
+dj-rest-auth
+django-cryptography
+msal

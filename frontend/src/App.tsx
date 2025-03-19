@@ -3,25 +3,40 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import 'primeicons/primeicons.css'; // Íconos de PrimeReac
-import "./index.css"
+import { MsalProvider } from "@azure/msal-react";
+import { PublicClientApplication } from "@azure/msal-browser";
+import { msalConfig } from "../src/components/Login/services/loginService";
+import UserProfile from "./pages/UserProfile";
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 const App: React.FC = () => {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route
-                    path="/dashboard"
-                    element={
-                        <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    }
-                />
-            </Routes>
-        </Router>
-    );
+  return (
+    <MsalProvider instance={msalInstance}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user_profile/:userId"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </Router>
+    </MsalProvider>
+  );
 };
 
 export default App;

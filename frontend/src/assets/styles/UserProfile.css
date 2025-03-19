@@ -1,0 +1,151 @@
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    height: 80vh;
+    overflow: hidden;
+}
+
+.user-title {
+    font-size: 1.2rem;
+    font-weight: normal;
+    text-align: center;
+    margin: 2rem;
+    margin-bottom: 4rem;
+}
+
+.user-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgb(255, 255, 255);
+    padding: 1rem;
+    border-radius: 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 725px;
+    flex-direction: row;
+}
+
+.user-content-profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.user-avatar-profile {
+    width: 200px !important; ;  
+    height: 200px !important; ;  
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #000000;
+    margin-left: 8rem;
+  }
+/* Avatar que contiene las iniciales */
+/* .w-10 {
+    width: 2.5rem;
+    height: 2.5rem;
+} */
+.user-avatar-container-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-info {
+    flex-grow: 1;
+    /* border: 2px solid #dadada; */
+    width: 400px;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-left: 4rem;
+    margin-right: 0rem;
+}
+
+.user-info p {
+    margin: 0.5rem 0;
+    color: #000000;
+}
+
+.back-button {
+    position: relative;
+    margin-top: 3rem;
+    margin-left: 3rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    color: black;
+    border: 3px solid black;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.back-button .pi {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.back-button:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.1);
+}
+
+.profile-modal-img {
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-modal-img:hover {
+    transform: scale(1.05);
+}
+
+.p-dialog {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.p-dialog .p-dialog-header {
+    background-color: #5B7D83;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 1rem;
+}
+
+.p-dialog .p-dialog-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 2rem;
+}
+
+.p-dialog .p-dialog-footer {
+    background: #ffffff;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Estilos para la estrella de favoritos */
+.favorite-icon {
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+  }
+  
+  .favorite-icon:hover {
+    color: #f39c12; /* Color dorado al pasar el ratón por encima */
+  }
+  

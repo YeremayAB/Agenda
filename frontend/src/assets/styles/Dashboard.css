@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Karma:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Karma', sans-serif;
+}
+
+body {
+  font-family: "Karma", sans-serif;
+}
+
+.p-paginator .p-paginator-pages {
+  display: flex;
+  gap: 4px;
+}
+
+.p-paginator .p-paginator-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.p-paginator .p-paginator-page:hover {
+  background-color: #5b7d83;
+  color: white;
+}
+
+.p-paginator .p-paginator-page.p-highlight {
+  background-color: #5b7d83;
+  color: white;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page:disabled {
+  cursor: not-allowed;
+  background-color: #f2f2f2;
+  color: #b3b3b3;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  font-size: 14px;
+  color: #5b7d83;
+  cursor: pointer;
+}
+
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-last {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.p-paginator .p-paginator-prev .pi,
+.p-paginator .p-paginator-next .pi,
+.p-paginator .p-paginator-first .pi,
+.p-paginator .p-paginator-last .pi {
+  font-size: 18px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding-bottom: 2rem;
+}
+
+.data-table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1.5rem;
+  margin-top: 30px;
+  justify-content: center;
+}
+
+.paginator-container {
+  margin-top: 25px;
+  margin-bottom: 20px;
+}
+
+/* Asegura que el dropdown tenga un diseño adecuado */
+.p-paginator .p-dropdown {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  position: relative; /* Asegura que el dropdown esté bien posicionado */
+}
+
+/* Contenedor del menú desplegable */
+.p-paginator .p-dropdown-panel {
+  position: absolute !important;
+  top: 100%; /* Lo coloca justo debajo del botón */
+  left: 0;
+  z-index: 1050 !important; /* Asegura que se muestre sobre otros elementos */
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 5px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 120px; /* Asegura que las opciones sean visibles */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo de las opciones dentro del dropdown */
+.p-paginator .p-dropdown-item {
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+/* Última opción sin borde */
+.p-paginator .p-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Hover y selección */
+.p-paginator .p-dropdown-item:hover {
+  background-color: #5b7d83;
+  color: white;
+}
+
+.p-paginator .p-dropdown-item:active {
+  background-color: #4a6c70;
+}
+
+/* Estado deshabilitado */
+.p-paginator .p-dropdown-item:disabled {
+  background-color: #f2f2f2;
+  color: #b3b3b3;
+  cursor: not-allowed;
+}
+
+/* Botón desplegable */
+.p-paginator .p-dropdown-label {
+  padding: 10px 15px;
+  border-radius: 6px;
+  background-color: white;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+  text-align: center;
+}
+
+/* Hover en el botón desplegable */
+.p-paginator .p-dropdown-label:hover {
+  background-color: #5b7d83;
+  color: white;
+}
+
+.p-avatar .p-avatar-text {
+  display: flex;
+  align-items: center;  /* Centra verticalmente el texto */
+  justify-content: center;  /* Centra horizontalmente el texto */
+  width: 100%;
+  height: 100%;
+  font-size: 1.2rem; /* Ajusta el tamaño de las letras si es necesario */
+  margin-top: 8px;
+}
+.buttons-container {
+  display: flex;
+  gap: 2rem;
+  margin-left: 4rem;
+}
+
+.p-button-btn-all {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold; /* Letras en negrita */
+  color: white !important; /* Letras blancas */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-all {
+  background-color: #5b7d83 !important;
+  border: 2px solid #000000;
+}
+
+.btn-all:hover {
+  background-color: #324b50 !important;
+}
+
+.p-button-btn-favorites {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold; /* Letras en negrita */
+  color: white !important; /* Letras blancas */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-favorites {
+  background-color: #5b7d83 !important;
+  border: 2px solid #000000;
+}
+
+.btn-favorites:hover {
+  background-color: #324b50 !important;
+}
+
+/* Estilo para el botón seleccionado */
+.selected {
+  background-color: #324b50 !important; /* Color más oscuro */
+  transform: scale(1.05);
+}
